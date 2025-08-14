@@ -1,0 +1,9 @@
+1. yet to add feature  in transaction : refresh after 1 month  and saved in  archive all transaction data
+2. deadline by email in credit & debit section
+3. add completed section in  goals
+
+// from where you  saved
+
+
+// what next
+add delete functionality,add funds and completed  in goals
