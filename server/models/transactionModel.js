@@ -33,9 +33,17 @@ const transactionSchema = new mongoose.Schema(
       required: true,
       default: 'expense',
     },
+    lastModified: { type: Date, default: Date.now },
   },
+   
   { timestamps: true }
 );
+transactionSchema.pre('save', function(next) {
+  this.lastModified = new Date();
+  next();
+});
+
+
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 export default Transaction;

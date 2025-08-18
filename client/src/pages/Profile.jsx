@@ -56,7 +56,7 @@ const Profile = () => {
         {/* Action Button */}
         <div className="mt-8">
           <button 
-           onClick={ logout()}
+           onClick={ logout}
           className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
             Logout
           </button>

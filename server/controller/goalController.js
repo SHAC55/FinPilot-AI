@@ -18,7 +18,6 @@ export const analyzeGoal = async (req, res) => {
 
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Create AI prompt
     const prompt = `
 You are a certified financial advisor in India.
 
@@ -28,64 +27,49 @@ The user’s goal details:
 - Saved amount: ₹${goal.savedAmount}
 - Deadline: ${goal.deadline ? goal.deadline.toDateString() : "Not specified"}
 
-You MUST return a JSON object with all of these required, non-empty fields:
-
+Return a pure JSON object with these fields (all mandatory):
 {
-  "monthlySaving": "Number or string explaining required monthly saving",
+  "monthlySaving": "string",
   "inflationAdjustedTarget": number,
   "investmentPlan": [
-    {
-      "risk": "Low",
-      "option": "string",
-      "expectedReturn": "string",
-      "estimatedTotalValue": "string",
-      "pros": ["string", ...],
-      "cons": ["string", ...],
-      "taxImplications": "string"
-    },
-    {
-      "risk": "Medium",
-      "option": "string",
-      "expectedReturn": "string",
-      "estimatedTotalValue": "string",
-      "pros": ["string", ...],
-      "cons": ["string", ...],
-      "taxImplications": "string"
-    },
-    {
-      "risk": "High",
-      "option": "string",
-      "expectedReturn": "string",
-      "estimatedTotalValue": "string",
-      "pros": ["string", ...],
-      "cons": ["string", ...],
-      "taxImplications": "string"
-    }
+    { "risk": "Low", "option": "string", "expectedReturn": "string", "estimatedTotalValue": "string", "pros": ["string"], "cons": ["string"], "taxImplications": "string" },
+    { "risk": "Medium", "option": "string", "expectedReturn": "string", "estimatedTotalValue": "string", "pros": ["string"], "cons": ["string"], "taxImplications": "string" },
+    { "risk": "High", "option": "string", "expectedReturn": "string", "estimatedTotalValue": "string", "pros": ["string"], "cons": ["string"], "taxImplications": "string" }
   ],
-  "keyRisks": ["string", ...],
-  "priorityActionsNext3Months": ["string", ...],
-  "suggestedFinancialTools": ["string", ...],
+  "keyRisks": ["string"],
+  "priorityActionsNext3Months": ["string"],
+  "suggestedFinancialTools": ["string"],
   "finalTip": "string"
 }
 
 Rules:
-- All fields are mandatory, no empty strings, null, or undefined values.
-- Use realistic India-specific financial options (FDs, RDs, PPF, NPS, Mutual Funds, ETFs).
-- Inflation-adjusted target assumes 6% annual inflation.
-- Monthly saving should be realistic given the target and time left.
-- Tax implications must be explained simply for each risk level.
-- Priority actions should be clear, short-term, and time-bound.
-- Suggested tools can be apps, calculators, or services available in India.
-- Return only pure JSON — no extra text or formatting.
+- Return only pure JSON, no markdown, no extra text.
+- Use India-specific financial options.
 `;
 
     const result = await model.generateContent(prompt);
-    const aiText = result.response.text();
+    let aiText = result.response.text();
+
+    // Clean any ```json or ``` fences that the model may return
+    aiText = aiText.replace(/```(json)?/g, "").trim();
+
+    // Parse AI output to actual JSON
+    let analysisJSON;
+    try {
+      analysisJSON = JSON.parse(aiText);
+    } catch (parseErr) {
+      console.error("Failed to parse AI JSON:", parseErr);
+      return res.status(500).json({
+        success: false,
+        message: "AI returned invalid JSON",
+        rawAIOutput: aiText,
+      });
+    }
 
     res.status(200).json({
       success: true,
       goalId: goal._id,
-      analysis: aiText,
+      analysis: analysisJSON, // send as object
     });
   } catch (error) {
     console.error("AI analysis error:", error);
@@ -96,6 +80,7 @@ Rules:
     });
   }
 };
+
 
 
 export const addGoal = async (req, res) => {
