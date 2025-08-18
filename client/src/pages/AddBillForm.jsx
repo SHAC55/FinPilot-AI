@@ -1,5 +1,7 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 const AddBillForm = () => {
   const {
@@ -11,9 +13,30 @@ const AddBillForm = () => {
   } = useForm();
   const reminder = watch("setReminder", false);
 
-  const onSubmit = (data) => {
-    console.log("Bill Data:", data);
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "http://localhost:5000/api/bill/add-bill",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const result =  res.data.data  ;
+      console.log(result)
+
+      if (res.data.success) {
+        toast.success("Bill added successfully");
+        reset();
+      } 
+    } catch (error) {
+      console.error("Error submitting bill:", error.message);
+      alert("❌ Something went wrong!");
+    }
   };
 
   return (

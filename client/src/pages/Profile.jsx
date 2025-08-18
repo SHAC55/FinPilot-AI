@@ -1,7 +1,11 @@
 import React from "react";
+import { useContext } from "react";
+import { AppContext } from "../context/appContext";
 
 
 const Profile = () => {
+
+  const { logout  }  = useContext(AppContext)
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
@@ -51,8 +55,10 @@ const Profile = () => {
 
         {/* Action Button */}
         <div className="mt-8">
-          <button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
-            Edit Profile
+          <button 
+           onClick={ logout()}
+          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
+            Logout
           </button>
         </div>
       </div>

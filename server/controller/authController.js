@@ -99,3 +99,33 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const searchUser = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email query is required",
+      });
+    }
+
+    // Search users by email (case-insensitive)
+    const users = await User.find({
+      email: { $regex: email, $options: "i" },
+    }).select("_id username email");
+
+    res.status(200).json({
+      success: true,
+      data:users,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};

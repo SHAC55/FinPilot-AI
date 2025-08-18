@@ -17,7 +17,13 @@ const AppProvider = ({ children }) => {
   const [debit, setDebit] = useState([]);
   const [archiveDebit, setArchiveDebit] = useState([]);
 
-  const [goals, setGoals] = useState([])
+  const [goals, setGoals] = useState([]);
+
+  const [bills, setBills] = useState([]);
+  const [completedBills, setCompletedBills] = useState([]);
+
+  const [splits,setSplits] = useState([]);
+  const [completedSplits,setCompletedSplits] = useState([]);
 
 
   const logout = () => {
@@ -26,8 +32,6 @@ const AppProvider = ({ children }) => {
     setToken("");
     setUser(null);
   };
-
-  
 
   const deleteItem = async (endpoint, id, setState) => {
     try {
@@ -136,16 +140,73 @@ const AppProvider = ({ children }) => {
     }
   };
 
- 
+  // bills
+  const markBillsAsCompleted = async (id) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:5000/api/bill/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (res.data.success) {
+        setBills((prev) => prev.filter((item) => item._id !== id));
+        setCompletedBills((prev) => [...prev, res.data.data]);
+      }
+    } catch (error) {
+      console.error("Error marking credit as completed", error);
+    }
+  };
+
+  const getCompletedBills = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:5000/api/bill/completedbills",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (res.data) {
+        setCompletedBills(res.data);
+        console.log("Completed Bills:", res.data);
+      }
+    } catch (error) {
+      console.error("Error fetching completed bills:", error);
+    }
+  };
+
+  // User search
+
+  const[searchUser,setSearchUser] = useState([])
+  const[participants,setParticipants] = useState([])
+
+  const addParticipant = (reqUser) => {
+    setParticipants((prev)  => {
+      if(!prev.find((u) => u._id === reqUser._id)){
+        return[...prev,reqUser]
+      }
+    })
+  } 
 
 
   const value = {
     token,setToken,user,setUser,logout, // Auth
-    deleteItem,  // global delete
+    deleteItem, // global delete
     expenses,setExpenses, //  Expenses
-    credit,setCredit,getCompletedCredit, archiveCredit,markCreditAsCompleted, //credit
+    credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted, //credit
     debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getArchivedDebit,getCompletedDebit, //debits
-    goals,setGoals,//goals
+    goals,setGoals, //goals
+    bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
+    splits,setSplits,completedSplits,setCompletedSplits,  //splits
+    searchUser,setSearchUser,
+    participants,setParticipants,addParticipant,splits,setSplits,completedSplits,setCompletedSplits //splits
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

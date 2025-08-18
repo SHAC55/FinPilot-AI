@@ -1,19 +1,13 @@
-import React from 'react'
-import { useEffect } from 'react'
+import React, { useContext } from 'react';
 import { CheckCircle2 } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { useContext } from 'react'
-import { AppContext } from '../context/appContext'
+import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../context/appContext';
 
-const CompletedBill = () => {
+const CompletedSplitButton = () => {
 
-  const{ completedBills,getCompletedBills }  = useContext(AppContext)
+  
 
-  useEffect(() => {
-    getCompletedBills()
-  }, [])
-
-  const  navigate =  useNavigate()
+    const navigate = useNavigate()
 
   return (
     <div className="w-full bg-white rounded-2xl p-6 border border-gray-200 hover:shadow-xl transition-shadow duration-300 h-[170px] flex flex-col justify-between">
@@ -24,11 +18,11 @@ const CompletedBill = () => {
           <div className="p-2 bg-green-100 rounded-lg">
             <CheckCircle2 className="w-5 h-5 text-green-600" />
           </div>
-          <h2 className="text-lg font-semibold text-gray-800">Completed Bills</h2>
+          <h2 className="text-lg font-semibold text-gray-800">Completed Splits</h2>
         </div>
 
         <p className="text-sm text-gray-600 leading-snug">
-          <span className="font-bold text-green-700">{completedBills.length}</span> completed this month.
+          <span className="font-bold text-green-700">1</span> completed this month.
         </p>
       </div>
 
@@ -39,13 +33,13 @@ const CompletedBill = () => {
         </span>
 
         <button
-        onClick={()  => navigate('/completedbills')  }
+        onClick={()  => navigate('/completedsplits')  }
         className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-medium shadow-md hover:shadow-lg transition-all duration-200">
           View
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CompletedBill
+export default CompletedSplitButton;

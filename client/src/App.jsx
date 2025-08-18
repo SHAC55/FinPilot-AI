@@ -21,17 +21,22 @@ import GoalAnalysisPage from "./pages/GoalAnalysis";
 import Profile from "./pages/Profile";
 import BillRemiander from "./pages/BillRemiander";
 import AddBillForm from "./pages/AddBillForm";
+import CompletedBill from "./components/CompletedBill";
+import CompletedBillsArchive from "./pages/CompletedBillsArchive";
+import AddSplitForm from "./pages/AddSplitForm";
+import ArchivedSplits from "./pages/ArchivedSPlits";
+
 
 const App = () => {
   const location = useLocation();
 
   // Hide Navbar on login and register pages
- const hideNavbarPaths = ["/Login", "/register", "/expense-form"];
+  const hideNavbarPaths = ["/Login", "/register", "/expense-form"];
 
   const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
 
   return (
-    <div>
+    <div className="min-w-[320px]">
       <Toaster position="top-right" />
 
       {/* Conditionally show Navbar */}
@@ -60,6 +65,10 @@ const App = () => {
         <Route path="/goal-analysis/:id" element={<GoalAnalysisPage />} />
         <Route path="/bills" element={<BillRemiander />} />
         <Route path="/add-bill" element={<AddBillForm />} />
+        <Route path="/completedbills" element={<CompletedBillsArchive />} />
+        <Route path="/addsplit" element={<AddSplitForm />} />
+        <Route path="/completedsplits" element={<ArchivedSplits />} />
+       
       </Routes>
     </div>
   );

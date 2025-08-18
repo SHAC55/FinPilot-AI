@@ -1,11 +1,16 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { AppContext } from "../context/appContext";
 import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const SummaryCard = () => {
-  const { expenses,credit,debit } = useContext(AppContext);
+  const { expenses,credit,debit, getCompletedDebit,getCompletedCredit } = useContext(AppContext);
   const navigate = useNavigate();
+
+  useEffect(() =>  {
+    getCompletedCredit()
+    getCompletedDebit()
+  },[])
 
   const { totalIncome, totalExpense, balance } = useMemo(() => {
     let income = 0;
@@ -64,7 +69,7 @@ const SummaryCard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {/* Add Expense Button */}
         <button
-          onClick={() => navigate("/expense-form")}
+          onClick={() => navigate("/transaction-form")}
           className="flex items-center justify-center rounded-xl h-32 bg-blue-700 hover:bg-blue-800 transition-colors duration-200 shadow-md"
         >
           <MdOutlinePlaylistAdd size={50} color="white" />

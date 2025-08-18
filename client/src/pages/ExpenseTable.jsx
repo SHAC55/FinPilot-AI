@@ -33,6 +33,8 @@ const ExpenseTable = () => {
     fetchAllExpenses();
   }, [setExpenses]);
 
+
+
   return (
     <div className="w-full px-4 py-6">
       <div className="mx-auto bg-white rounded-2xl p-6">
@@ -107,7 +109,7 @@ const ExpenseTable = () => {
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() =>
-                          deleteItem("delete-expense", expense._id, setExpenses)
+                          deleteItem("transaction/delete-expense", expense._id, setExpenses)
                         }
                         className="rounded-full p-2 hover:bg-red-100 transition-colors"
                         title="Delete"
@@ -117,6 +119,7 @@ const ExpenseTable = () => {
                           className="text-red-600 hover:text-red-800"
                         />
                       </button>
+                    
                     </td>
                   </tr>
                 ))}

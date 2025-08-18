@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   goal: [{ type: mongoose.Schema.Types.ObjectId, ref: "Goal" }],
   credit: [{ type: mongoose.Schema.Types.ObjectId, ref: "Credit" }],
   dredit: [{ type: mongoose.Schema.Types.ObjectId, ref: "Debit" }],
+  bills: [{ type: mongoose.Schema.Types.ObjectId, ref: "Bill" }],
   password: { type: String, require: true },
   createdAt: { type: Date, default: Date.now },
 });

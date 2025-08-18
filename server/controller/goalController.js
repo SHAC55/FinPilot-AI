@@ -20,20 +20,64 @@ export const analyzeGoal = async (req, res) => {
 
     // Create AI prompt
     const prompt = `
-      You are a financial advisor in India.
-      The user has the following goal:
-      Goal name: ${goal.goalName}
-      Target amount: ₹${goal.targetAmount}
-      Saved amount: ₹${goal.savedAmount}
-      Deadline: ${goal.deadline ? goal.deadline.toDateString() : "Not specified"}
+You are a certified financial advisor in India.
 
-      Provide:
-      "Act as a financial advisor . Based on the user's goal amount, target date, and current savings capacity, provide:
-      1. A realistic monthly saving or investment amount to reach the goal on time.
-      2. An investment plan with 2-3 suitable options in India (low, medium, and high risk).
-      3. Expected returns for each option and estimated total value at the end of the period.
-      4. Key risks or market factors to monitor.
-    `;
+The user’s goal details:
+- Goal name: ${goal.goalName}
+- Target amount: ₹${goal.targetAmount}
+- Saved amount: ₹${goal.savedAmount}
+- Deadline: ${goal.deadline ? goal.deadline.toDateString() : "Not specified"}
+
+You MUST return a JSON object with all of these required, non-empty fields:
+
+{
+  "monthlySaving": "Number or string explaining required monthly saving",
+  "inflationAdjustedTarget": number,
+  "investmentPlan": [
+    {
+      "risk": "Low",
+      "option": "string",
+      "expectedReturn": "string",
+      "estimatedTotalValue": "string",
+      "pros": ["string", ...],
+      "cons": ["string", ...],
+      "taxImplications": "string"
+    },
+    {
+      "risk": "Medium",
+      "option": "string",
+      "expectedReturn": "string",
+      "estimatedTotalValue": "string",
+      "pros": ["string", ...],
+      "cons": ["string", ...],
+      "taxImplications": "string"
+    },
+    {
+      "risk": "High",
+      "option": "string",
+      "expectedReturn": "string",
+      "estimatedTotalValue": "string",
+      "pros": ["string", ...],
+      "cons": ["string", ...],
+      "taxImplications": "string"
+    }
+  ],
+  "keyRisks": ["string", ...],
+  "priorityActionsNext3Months": ["string", ...],
+  "suggestedFinancialTools": ["string", ...],
+  "finalTip": "string"
+}
+
+Rules:
+- All fields are mandatory, no empty strings, null, or undefined values.
+- Use realistic India-specific financial options (FDs, RDs, PPF, NPS, Mutual Funds, ETFs).
+- Inflation-adjusted target assumes 6% annual inflation.
+- Monthly saving should be realistic given the target and time left.
+- Tax implications must be explained simply for each risk level.
+- Priority actions should be clear, short-term, and time-bound.
+- Suggested tools can be apps, calculators, or services available in India.
+- Return only pure JSON — no extra text or formatting.
+`;
 
     const result = await model.generateContent(prompt);
     const aiText = result.response.text();
