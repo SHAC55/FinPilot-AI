@@ -18,7 +18,7 @@ const Credit = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/transaction/getallcredit",
+          "https://finpilot-ai-backend.onrender.com/api/transaction/getallcredit",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setCredit(res.data.data || []);

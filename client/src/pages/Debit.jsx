@@ -17,7 +17,7 @@ const Debit = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/transaction/getalldebit",
+          "https://finpilot-ai-backend.onrender.com/api/transaction/getalldebit",
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setDebit(res.data.data || []);

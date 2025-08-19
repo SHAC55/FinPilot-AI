@@ -21,7 +21,7 @@ const AddGoalForm = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:5000/api/goal/add-goal",
+        "https://finpilot-ai-backend.onrender.com/api/goal/add-goal",
         data,
         {
           headers: {

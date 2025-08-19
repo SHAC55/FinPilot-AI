@@ -12,7 +12,7 @@ const AllGoals = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/goal/getallgoals",
+          "https://finpilot-ai-backend.onrender.com/api/goal/getallgoals",
           {
             headers: { Authorization: `Bearer ${token}` },
           }

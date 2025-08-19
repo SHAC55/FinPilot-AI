@@ -10,7 +10,7 @@ const ArchivedSplits = () => {
       const fetchCompletedSplits = async () => {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:5000/api/split/completedsplits",
+          "https://finpilot-ai-backend.onrender.com/api/split/completedsplits",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

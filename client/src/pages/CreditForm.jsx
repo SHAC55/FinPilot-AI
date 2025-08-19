@@ -17,7 +17,7 @@ export default function CreditForm() {
     try {
       const token = localStorage.getItem("token");
       const res  =  await axios.post(
-        "http://localhost:5000/api/transaction/add-credit",
+        "https://finpilot-ai-backend.onrender.com/api/transaction/add-credit",
         data,
         {
           headers: {

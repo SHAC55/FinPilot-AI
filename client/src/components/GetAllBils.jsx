@@ -11,7 +11,7 @@ const GetAllBills = () => {
     const fetchBills = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/bill/get-bills", {
+        const res = await axios.get("https://finpilot-ai-backend.onrender.com/api/bill/get-bills", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

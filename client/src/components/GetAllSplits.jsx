@@ -25,7 +25,7 @@ const GetAllSplits = () => {
       const token = localStorage.getItem("token");
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/split/allsplits",
+          "https://finpilot-ai-backend.onrender.com/api/split/allsplits",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -48,7 +48,7 @@ const GetAllSplits = () => {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        `http://localhost:5000/api/split/sendReminder/${splitId}`,
+        `https://finpilot-ai-backend.onrender.com/api/split/sendReminder/${splitId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +80,7 @@ const GetAllSplits = () => {
 
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/split/updateAmounts/${splitId}`,
+        `https://finpilot-ai-backend.onrender.com/api/split/updateAmounts/${splitId}`,
         { participants: [{ userId, ...updatedParticipant }] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -97,7 +97,7 @@ const GetAllSplits = () => {
  const markSplitAsCompleted = async (id) => {
   try {
     const  token =  localStorage.getItem("token")
-    const res = await axios.patch(`http://localhost:5000/api/split/${id}`, {}, {
+    const res = await axios.patch(`https://finpilot-ai-backend.onrender.com/api/split/${id}`, {}, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 

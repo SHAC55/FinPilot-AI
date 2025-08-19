@@ -19,7 +19,7 @@ const Register = () => {
   // Step 1: Register & Request OTP
   const handleRegister = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
+      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/register", {
         username: data.username,
         email: data.email,
         password: data.password,
@@ -40,7 +40,7 @@ const Register = () => {
   // Step 2: Verify OTP
   const handleVerifyOtp = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/verify-otp", {
         email: userEmail,
         otp: data.otp,
       });

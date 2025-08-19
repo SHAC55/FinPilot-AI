@@ -11,7 +11,7 @@ const GoalAnalysisPage = () => {
     const fetchAnalysis = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/goal/analyze-goal/${id}`, {
+        const res = await fetch(`https://finpilot-ai-backend.onrender.com/api/goal/analyze-goal/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

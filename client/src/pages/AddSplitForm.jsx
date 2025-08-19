@@ -38,7 +38,7 @@ const AddSplitForm = ({  }) => {
           if (!token) return;
           try {
             const res = await axios.get(
-              `http://localhost:5000/api/auth/searchuser?email=${value}`,
+              `https://finpilot-ai-backend.onrender.com/api/auth/searchuser?email=${value}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             setSearchUser(res.data.data || []);
@@ -85,7 +85,7 @@ const AddSplitForm = ({  }) => {
       };
 
       const res = await axios.post(
-        "http://localhost:5000/api/split/add-split",
+        "https://finpilot-ai-backend.onrender.com/api/split/add-split",
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

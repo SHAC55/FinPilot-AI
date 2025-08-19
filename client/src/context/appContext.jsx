@@ -42,7 +42,7 @@ const AppProvider = ({ children }) => {
   const deleteItem = async (endpoint, id, setState) => {
     try {
       const res = await axios.delete(
-        `http://localhost:5000/api/${endpoint}/${id}`,
+        `https://finpilot-ai-backend.onrender.com/api/${endpoint}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -66,7 +66,7 @@ const AppProvider = ({ children }) => {
   const markCreditAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/transaction/credit/${id}`,
+        `https://finpilot-ai-backend.onrender.com/api/transaction/credit/${id}`,
         {},
         {
           headers: {
@@ -87,7 +87,7 @@ const AppProvider = ({ children }) => {
   const getCompletedCredit = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/transaction/getcompletedcredit",
+        "https://finpilot-ai-backend.onrender.com/api/transaction/getcompletedcredit",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,7 +108,7 @@ const AppProvider = ({ children }) => {
   const markDedbitAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/transaction/debit/${id}`,
+        `https://finpilot-ai-backend.onrender.com/api/transaction/debit/${id}`,
         {},
         {
           headers: {
@@ -129,7 +129,7 @@ const AppProvider = ({ children }) => {
   const getCompletedDebit = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/transaction/getcompletedebit",
+        "https://finpilot-ai-backend.onrender.com/api/transaction/getcompletedebit",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -150,7 +150,7 @@ const AppProvider = ({ children }) => {
   const markBillsAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/api/bill/${id}`,
+        `https://finpilot-ai-backend.onrender.com/api/bill/${id}`,
         {},
         {
           headers: {
@@ -171,7 +171,7 @@ const AppProvider = ({ children }) => {
   const getCompletedBills = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/bill/completedbills",
+        "https://finpilot-ai-backend.onrender.com/api/bill/completedbills",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

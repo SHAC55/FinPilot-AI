@@ -19,7 +19,7 @@ const Archive = () => {
         console.log("Fetching archives for user:", userId);
 
         const { data } = await axios.get(
-          `http://localhost:5000/api/transaction/archivetransaction/${userId}`,
+          `https://finpilot-ai-backend.onrender.com/api/transaction/archivetransaction/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

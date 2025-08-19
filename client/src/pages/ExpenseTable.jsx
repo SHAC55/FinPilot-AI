@@ -12,7 +12,7 @@ const ExpenseTable = () => {
     const fetchAllExpenses = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/transaction/get-expenses",
+          "https://finpilot-ai-backend.onrender.com/api/transaction/get-expenses",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -20,7 +20,7 @@ const DebitForm = () => {
   try {
     const token = localStorage.getItem("token");
     const res = await axios.post(
-      "http://localhost:5000/api/transaction/add-debit",
+      "https://finpilot-ai-backend.onrender.com/api/transaction/add-debit",
       data,
       {
         headers: {

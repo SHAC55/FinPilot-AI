@@ -21,7 +21,7 @@ const ExpenseForm = () => {
   const handleAddExpense = async (data) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/transaction/add-expense",
+        "https://finpilot-ai-backend.onrender.com/api/transaction/add-expense",
         data,
         {
           headers: {

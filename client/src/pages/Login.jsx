@@ -21,7 +21,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/login", {
         email: data.email,
         password: data.password,
       });
@@ -48,7 +48,7 @@ const Login = () => {
 
   const handleVerifyOtp = async (otpData) => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/verify-otp", {
         email: userEmail,
         otp: otpData.otp,
       });
