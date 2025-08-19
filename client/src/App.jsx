@@ -24,7 +24,7 @@ import AddBillForm from "./pages/AddBillForm";
 import CompletedBill from "./components/CompletedBill";
 import CompletedBillsArchive from "./pages/CompletedBillsArchive";
 import AddSplitForm from "./pages/AddSplitForm";
-import ArchivedSplits from "./pages/ArchivedSPlits";
+import ArchivedSplits from "./pages/ArchivedSplits";
 import { useEffect } from "react";
 import PrivateRoute from "./components/PrivateRoute";
 
