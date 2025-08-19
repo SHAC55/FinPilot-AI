@@ -25,10 +25,6 @@ connectMongoDB();
 app.use(cors());
 app.use(express.json());
 
-
-app.use(passport.initialize());
-app.use(passport.session());
-
 // All Router
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
