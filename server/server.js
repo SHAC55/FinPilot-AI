@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import passport from "passport";
+
 
 import connectMongoDB from "./config/mongoDB.js";
 import authRouter from "./routes/authRoute.js";
@@ -12,7 +12,7 @@ import splitRouter from "./routes/splitRoute.js";
 import "./utils/reminderScheduler.js";
 import financeAnalysisRouter from "./routes/aianalysisRoute.js";
 import "./utils/monthlyArchiveJob.js";
-import "./config/passport.js";
+
 
 dotenv.config();
 
@@ -24,22 +24,6 @@ connectMongoDB();
 // middleware
 app.use(cors());
 app.use(express.json());
-
-// ✅ session middleware must come BEFORE passport
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET, // store in .env
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      secure: false, // true if using https
-      maxAge: 1000 * 60 * 60 * 24, // 1 day
-    },
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 // All Router
 app.use("/api/auth", authRouter);
