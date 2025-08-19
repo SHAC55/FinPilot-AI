@@ -212,7 +212,7 @@ const AppProvider = ({ children }) => {
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
     splits,setSplits,completedSplits,setCompletedSplits,  //splits
     searchUser,setSearchUser,
-    participants,setParticipants,addParticipant,splits,setSplits,completedSplits,setCompletedSplits //splits
+    participants,setParticipants,addParticipant //splits
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
