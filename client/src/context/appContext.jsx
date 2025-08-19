@@ -206,7 +206,7 @@ const AppProvider = ({ children }) => {
     deleteItem, // global delete
     expenses,setExpenses, //  Expenses
     credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted,creditCount ,//credit
-    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getArchivedDebit,getCompletedDebit,debitCount, //debits
+    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getCompletedDebit,debitCount, //debits
     goals,setGoals, //goals
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
     splits,setSplits,completedSplits,setCompletedSplits,  //splits
