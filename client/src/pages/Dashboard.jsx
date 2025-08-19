@@ -1,10 +1,7 @@
 import React from "react";
 import DashboardAnalytics from "../components/DashboardAnalytics";
-
 import AiBudgetAnalysis from "../components/AiBudgetAnalysis";
 import QuickButtonDash from "../components/QuickButtonDash";
-import { useContext } from "react";
-import { AppContext } from "../context/appContext";
 
 
 const Dashboard = () => {

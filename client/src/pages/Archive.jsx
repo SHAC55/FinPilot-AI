@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useContext } from "react";
+import { AppContext } from "../context/appContext";
 
 const Archive = () => {
   const [archives, setArchives] = useState([]);
@@ -13,13 +15,15 @@ const Archive = () => {
       return;
     }
 
+    const{ URL  } = useContext(AppContext)
+
     const fetchArchives = async () => {
       try {
         const token = localStorage.getItem("token");
         console.log("Fetching archives for user:", userId);
 
         const { data } = await axios.get(
-          `https://finpilot-ai-backend.onrender.com/api/transaction/archivetransaction/${userId}`,
+          `${URL}/transaction/archivetransaction/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

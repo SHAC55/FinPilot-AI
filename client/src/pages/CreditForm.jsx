@@ -14,10 +14,12 @@ export default function CreditForm() {
   } = useForm();
 
   const onSubmit = async (data) => {
+
+    const{ URL } = useContext(AppContext)
     try {
       const token = localStorage.getItem("token");
       const res  =  await axios.post(
-        "https://finpilot-ai-backend.onrender.com/api/transaction/add-credit",
+        `${URL}/transaction/add-credit`,
         data,
         {
           headers: {

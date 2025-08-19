@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 const DebitForm = () => {
 
-  const{debit,setDebit} = useContext(AppContext)
+  const{debit,setDebit,URL} = useContext(AppContext)
 
    const {
       register,
@@ -20,7 +20,7 @@ const DebitForm = () => {
   try {
     const token = localStorage.getItem("token");
     const res = await axios.post(
-      "https://finpilot-ai-backend.onrender.com/api/transaction/add-debit",
+      `${URL}/transaction/add-debit`,
       data,
       {
         headers: {

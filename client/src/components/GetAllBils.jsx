@@ -5,13 +5,13 @@ import { FaRupeeSign, FaRegClock, FaCalendarAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 
 const GetAllBills = () => {
-  const { bills, setBills, deleteItem,  markBillsAsCompleted } = useContext(AppContext);
+  const { bills, setBills, deleteItem,  markBillsAsCompleted,URL } = useContext(AppContext);
 
   useEffect(() => {
     const fetchBills = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("https://finpilot-ai-backend.onrender.com/api/bill/get-bills", {
+        const res = await axios.get(`${URL}/bill/get-bills`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

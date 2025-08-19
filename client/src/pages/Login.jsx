@@ -6,7 +6,7 @@ import { AppContext } from "../context/appContext";
 import { useForm } from "react-hook-form";
 
 const Login = () => {
-  const { setToken, setUser } = useContext(AppContext);
+  const { setToken, setUser,URL } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [showOtp, setShowOtp] = useState(false);
@@ -21,7 +21,7 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     try {
-      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/login", {
+      const res = await axios.post(`${URL}/auth/login`, {
         email: data.email,
         password: data.password,
       });
@@ -48,7 +48,7 @@ const Login = () => {
 
   const handleVerifyOtp = async (otpData) => {
     try {
-      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/verify-otp", {
+      const res = await axios.post(`${URL}/auth/verify-otp`, {
         email: userEmail,
         otp: otpData.otp,
       });

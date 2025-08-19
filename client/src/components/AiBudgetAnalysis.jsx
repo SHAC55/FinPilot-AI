@@ -1,11 +1,15 @@
   import React, { useEffect, useState } from "react";
   import { Lightbulb, RefreshCw } from "lucide-react";
   import axios from "axios";
+import { useContext } from "react";
+import { AppContext } from "../context/appContext";
 
   const AiBudgetAnalysis = () => {
     const [insight, setInsight] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const{ URL } =  useContext(AppContext)
 
     const fetchInsight = async (forceRefresh = false) => {
       try {
@@ -14,8 +18,8 @@
 
         const token = localStorage.getItem("token");
         const url = forceRefresh
-          ? "http://localhost:5000/api/finance/finance-analysis?refresh=true"
-          : "http://localhost:5000/api/finance/finance-analysis";
+          ? `${URL}/finance/finance-analysis?refresh=true`
+          : `${URL}/finance/finance-analysis`;
 
         const res = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` },

@@ -2,6 +2,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useContext } from "react";
+import { AppContext } from "../context/appContext";
 
 const categories = [
   'Utilities','Groceries','Salary','Eductaion', "Transport", "Rent", "Entertainment",
@@ -18,10 +20,12 @@ const ExpenseForm = () => {
     reset,
   } = useForm();
 
+  const{ URL } =  useContext(AppContext)
+
   const handleAddExpense = async (data) => {
     try {
       const res = await axios.post(
-        "https://finpilot-ai-backend.onrender.com/api/transaction/add-expense",
+        `${URL}/transaction/add-expense`,
         data,
         {
           headers: {

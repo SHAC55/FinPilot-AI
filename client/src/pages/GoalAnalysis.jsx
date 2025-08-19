@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useContext } from "react";
 import { useParams } from "react-router-dom";
+import { AppContext } from "../context/appContext";
 
 const GoalAnalysisPage = () => {
   const { id } = useParams();
@@ -7,11 +9,13 @@ const GoalAnalysisPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const{ URL } =  useContext(AppContext)
+
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://finpilot-ai-backend.onrender.com/api/goal/analyze-goal/${id}`, {
+        const res = await fetch(`${URL}/goal/analyze-goal/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

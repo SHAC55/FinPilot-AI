@@ -5,8 +5,6 @@ import { AppContext } from '../context/appContext';
 
 const CompletedSplitButton = () => {
 
-  
-
     const navigate = useNavigate()
 
   return (

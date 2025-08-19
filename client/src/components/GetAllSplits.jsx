@@ -14,7 +14,7 @@ import { AppContext } from "../context/appContext";
 import toast from "react-hot-toast";
 
 const GetAllSplits = () => {
-  const { deleteItem,splits,setSplits,completedSplits,setCompletedSplits } = useContext(AppContext);
+  const { deleteItem,splits,setSplits,URL,setCompletedSplits } = useContext(AppContext);
 
   
   const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ const GetAllSplits = () => {
       const token = localStorage.getItem("token");
       try {
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/split/allsplits",
+          `${URL}/split/allsplits`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -48,7 +48,7 @@ const GetAllSplits = () => {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        `https://finpilot-ai-backend.onrender.com/api/split/sendReminder/${splitId}`,
+        `${URL}/split/sendReminder/${splitId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -80,7 +80,7 @@ const GetAllSplits = () => {
 
     try {
       const res = await axios.patch(
-        `https://finpilot-ai-backend.onrender.com/api/split/updateAmounts/${splitId}`,
+        `${URL}/split/updateAmounts/${splitId}`,
         { participants: [{ userId, ...updatedParticipant }] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -97,7 +97,7 @@ const GetAllSplits = () => {
  const markSplitAsCompleted = async (id) => {
   try {
     const  token =  localStorage.getItem("token")
-    const res = await axios.patch(`https://finpilot-ai-backend.onrender.com/api/split/${id}`, {}, {
+    const res = await axios.patch(`${URL}/split/${id}`, {}, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
 

@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 
 const Debit = () => {
   const navigate = useNavigate();
-  const { debit, setDebit, deleteItem, markDedbitAsCompleted } =
+  const { debit, setDebit, deleteItem, markDedbitAsCompleted,URL } =
     useContext(AppContext);
 
   // Fetch debits from API
@@ -17,7 +17,7 @@ const Debit = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/transaction/getalldebit",
+          `${URL}/transaction/getalldebit`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setDebit(res.data.data || []);

@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AllGoals = () => {
-  const { goals, setGoals, deleteItem } = useContext(AppContext);
+  const { goals, setGoals, deleteItem,URL } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const AllGoals = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/goal/getallgoals",
+          `${URL}/goal/getallgoals`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -33,7 +33,7 @@ const AllGoals = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.patch(
-        `http://localhost:5000/api/goal/addfund/${id}`,
+        `${URL}/goal/addfund/${id}`,
         { amount }, // body
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +61,7 @@ const AllGoals = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/goal/complete/${id}`,
+        `${URL}/goal/complete/${id}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

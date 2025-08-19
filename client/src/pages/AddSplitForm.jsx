@@ -6,7 +6,7 @@ import { AppContext } from "../context/appContext";
 import toast from "react-hot-toast";
 
 const AddSplitForm = ({  }) => {
-  const { searchUser, setSearchUser } = useContext(AppContext);
+  const { searchUser, setSearchUser,URL } = useContext(AppContext);
 
   const { register, handleSubmit, control, reset } = useForm({
     defaultValues: {
@@ -38,7 +38,7 @@ const AddSplitForm = ({  }) => {
           if (!token) return;
           try {
             const res = await axios.get(
-              `https://finpilot-ai-backend.onrender.com/api/auth/searchuser?email=${value}`,
+              `${URL}/auth/searchuser?email=${value}`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             setSearchUser(res.data.data || []);
@@ -85,7 +85,7 @@ const AddSplitForm = ({  }) => {
       };
 
       const res = await axios.post(
-        "https://finpilot-ai-backend.onrender.com/api/split/add-split",
+        `${URL}/split/add-split`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );

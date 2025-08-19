@@ -3,14 +3,14 @@ import { AppContext } from "../context/appContext";
 import axios from "axios";
 
 const ArchivedSplits = () => {
-  const { completedSplits, setCompletedSplits } = useContext(AppContext);
+  const { completedSplits, setCompletedSplits,URL } = useContext(AppContext);
 
   useEffect(() => {
     try {
       const fetchCompletedSplits = async () => {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/split/completedsplits",
+          `${URL}/split/completedsplits`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

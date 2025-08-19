@@ -7,7 +7,7 @@ import { AppContext } from "../context/appContext";
 
 const AddGoalForm = () => {
 
-  const{ goals,setGoals } =  useContext(AppContext)
+  const{ goals,setGoals,URL } =  useContext(AppContext)
 
   const {
     register,
@@ -21,7 +21,7 @@ const AddGoalForm = () => {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "https://finpilot-ai-backend.onrender.com/api/goal/add-goal",
+        `${URL}/goal/add-goal`,
         data,
         {
           headers: {

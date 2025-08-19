@@ -3,12 +3,17 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../context/appContext";
 
 const Register = () => {
+
   const navigate = useNavigate();
   const [otpSent, setOtpSent] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [formData, setFormData] = useState({}); // store user data for later
+
+  const{ URL } =  useContext(AppContext)
 
   const {
     register,
@@ -19,7 +24,7 @@ const Register = () => {
   // Step 1: Register & Request OTP
   const handleRegister = async (data) => {
     try {
-      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/register", {
+      const res = await axios.post(`${URL}/auth/register`, {
         username: data.username,
         email: data.email,
         password: data.password,
@@ -40,7 +45,7 @@ const Register = () => {
   // Step 2: Verify OTP
   const handleVerifyOtp = async (data) => {
     try {
-      const res = await axios.post("https://finpilot-ai-backend.onrender.com/api/auth/verify-otp", {
+      const res = await axios.post(`${URL}/auth/verify-otp`, {
         email: userEmail,
         otp: data.otp,
       });

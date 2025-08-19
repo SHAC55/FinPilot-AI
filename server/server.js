@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import session from "express-session";  // ✅ you missed this import
 import passport from "passport";
 
 import connectMongoDB from "./config/mongoDB.js";

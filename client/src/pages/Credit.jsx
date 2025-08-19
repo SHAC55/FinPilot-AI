@@ -9,7 +9,7 @@ import { BsCheckCircleFill, BsHourglassSplit } from "react-icons/bs";
 
 const Credit = () => {
   const navigate = useNavigate();
-  const { credit, setCredit, deleteItem, markCreditAsCompleted, } =
+  const { credit, setCredit, deleteItem, markCreditAsCompleted,URL } =
     useContext(AppContext);
 
   // Fetch credits from API
@@ -18,7 +18,7 @@ const Credit = () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/transaction/getallcredit",
+          `${URL}/transaction/getallcredit`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setCredit(res.data.data || []);

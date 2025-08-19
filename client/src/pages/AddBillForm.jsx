@@ -1,7 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { AppContext } from "../context/appContext";
 
 const AddBillForm = () => {
   const {
@@ -13,11 +15,13 @@ const AddBillForm = () => {
   } = useForm();
   const reminder = watch("setReminder", false);
 
+  const{ URL } = useContext(AppContext)
+
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://finpilot-ai-backend.onrender.com/api/bill/add-bill",
+        `${URL}/bill/add-bill`,
         data,
         {
           headers: {

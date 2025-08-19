@@ -1,12 +1,13 @@
 import axios from "axios";
 import { createContext, useState } from "react";
 import toast from "react-hot-toast";
-import { getArchivedDebit } from "../../../server/controller/transactionController";
 import { useNavigate } from "react-router-dom";
 
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
+
+  const  URL  =  'https://finpilot-aiserver.onrender.com/api'
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
@@ -42,7 +43,7 @@ const AppProvider = ({ children }) => {
   const deleteItem = async (endpoint, id, setState) => {
     try {
       const res = await axios.delete(
-        `https://finpilot-ai-backend.onrender.com/api/${endpoint}/${id}`,
+        `${URL}/${endpoint}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -66,7 +67,7 @@ const AppProvider = ({ children }) => {
   const markCreditAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `https://finpilot-ai-backend.onrender.com/api/transaction/credit/${id}`,
+        `${URL}/transaction/credit/${id}`,
         {},
         {
           headers: {
@@ -87,7 +88,7 @@ const AppProvider = ({ children }) => {
   const getCompletedCredit = async () => {
     try {
       const res = await axios.get(
-        "https://finpilot-ai-backend.onrender.com/api/transaction/getcompletedcredit",
+        `${URL}/transaction/getcompletedcredit`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -108,7 +109,7 @@ const AppProvider = ({ children }) => {
   const markDedbitAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `https://finpilot-ai-backend.onrender.com/api/transaction/debit/${id}`,
+        `${URL}/transaction/debit/${id}`,
         {},
         {
           headers: {
@@ -129,7 +130,7 @@ const AppProvider = ({ children }) => {
   const getCompletedDebit = async () => {
     try {
       const res = await axios.get(
-        "https://finpilot-ai-backend.onrender.com/api/transaction/getcompletedebit",
+        `${URL}/transaction/getcompletedebit`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -150,7 +151,7 @@ const AppProvider = ({ children }) => {
   const markBillsAsCompleted = async (id) => {
     try {
       const res = await axios.patch(
-        `https://finpilot-ai-backend.onrender.com/api/bill/${id}`,
+        `${URL}/bill/${id}`,
         {},
         {
           headers: {
@@ -171,7 +172,7 @@ const AppProvider = ({ children }) => {
   const getCompletedBills = async () => {
     try {
       const res = await axios.get(
-        "https://finpilot-ai-backend.onrender.com/api/bill/completedbills",
+        `${URL}/bill/completedbills`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -204,10 +205,11 @@ const AppProvider = ({ children }) => {
 
   const value = {
     token,setToken,user,setUser,logout, // Auth
+    URL,
     deleteItem, // global delete
     expenses,setExpenses, //  Expenses
     credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted,creditCount ,//credit
-    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getArchivedDebit,getCompletedDebit,debitCount, //debits
+    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getCompletedDebit,debitCount, //debits
     goals,setGoals, //goals
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
     splits,setSplits,completedSplits,setCompletedSplits,  //splits

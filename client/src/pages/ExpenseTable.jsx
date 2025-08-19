@@ -4,7 +4,7 @@ import { AiFillDelete } from "react-icons/ai";
 import { AppContext } from "../context/appContext";
 
 const ExpenseTable = () => {
-  const { expenses, setExpenses, deleteItem } = useContext(AppContext);
+  const { expenses, setExpenses, deleteItem,URL } = useContext(AppContext);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -12,7 +12,7 @@ const ExpenseTable = () => {
     const fetchAllExpenses = async () => {
       try {
         const res = await axios.get(
-          "https://finpilot-ai-backend.onrender.com/api/transaction/get-expenses",
+          `${URL}/transaction/get-expenses`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
