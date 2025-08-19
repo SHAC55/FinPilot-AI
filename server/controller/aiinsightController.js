@@ -15,8 +15,7 @@ const TransactionAnalysis = mongoose.model("TransactionAnalysis", transactionAna
 export const financeAnalysisAI = async (req, res) => {
   try {
     const userId = req.user._id; // from auth middleware
-    console.log("api hit");
-
+    
     // Get last 30 days transactions
     const last30Days = new Date();
     last30Days.setDate(last30Days.getDate() - 30);
@@ -77,7 +76,7 @@ Return JSON with the following fields:
   "topCategories": [
     { "category": "string", "totalSpent": number }
   ],
-  "finalTip": "One practical short financial tip"
+  "finalTip": "One short, practical financial tip tailored for Indian users"
 }
 
 Rules:

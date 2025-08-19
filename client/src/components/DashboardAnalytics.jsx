@@ -6,7 +6,7 @@ const DashboardAnalytics = () => {
   const { expenses } = useContext(AppContext);
 
   return (
-    <div className="w-full shadow-lg">
+    <div className="rounded-md ">
       <MonthlyTrendsChart transactions={expenses} />
     </div>
   );

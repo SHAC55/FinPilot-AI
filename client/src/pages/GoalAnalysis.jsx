@@ -96,7 +96,7 @@ const GoalAnalysisPage = () => {
 
       {/* Final Tip */}
       {analysis.finalTip && (
-        <div className="bg-yellow-100 p-5 rounded-lg shadow">
+        <div className="bg-red-100 p-5 rounded-lg shadow">
           <h2 className="text-xl font-semibold mb-2">Final Tip</h2>
           <p className="text-gray-800">{analysis.finalTip}</p>
         </div>

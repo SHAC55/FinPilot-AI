@@ -34,6 +34,7 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            
           </div>
 
           {/* Mobile Menu Button */}

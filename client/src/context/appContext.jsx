@@ -2,6 +2,7 @@ import axios from "axios";
 import { createContext, useState } from "react";
 import toast from "react-hot-toast";
 import { getArchivedDebit } from "../../../server/controller/transactionController";
+import { useNavigate } from "react-router-dom";
 
 const AppContext = createContext();
 
@@ -25,13 +26,18 @@ const AppProvider = ({ children }) => {
   const [splits,setSplits] = useState([]);
   const [completedSplits,setCompletedSplits] = useState([]);
 
+  const creditCount  = credit.length ;
+  const debitCount  =  debit.length ;  
 
+  const  navigate =  useNavigate()
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken("");
-    setUser(null);
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setToken("");
+  setUser(null); 
+  navigate('/login')
+};
+
 
   const deleteItem = async (endpoint, id, setState) => {
     try {
@@ -91,7 +97,7 @@ const AppProvider = ({ children }) => {
 
       if (res.data) {
         setArchiveCredit(res.data);
-        console.log("Completed credits:", res.data);
+        // console.log("Completed credits:", res.data);
       }
     } catch (error) {
       console.error("Error fetching completed credits:", error);
@@ -133,7 +139,7 @@ const AppProvider = ({ children }) => {
 
       if (res.data) {
         setArchiveDebit(res.data);
-        console.log("Completed debits:", res.data);
+        // console.log("Completed debits:", res.data);
       }
     } catch (error) {
       console.error("Error fetching completed credits:", error);
@@ -175,7 +181,7 @@ const AppProvider = ({ children }) => {
 
       if (res.data) {
         setCompletedBills(res.data);
-        console.log("Completed Bills:", res.data);
+        // console.log("Completed Bills:", res.data);
       }
     } catch (error) {
       console.error("Error fetching completed bills:", error);
@@ -200,8 +206,8 @@ const AppProvider = ({ children }) => {
     token,setToken,user,setUser,logout, // Auth
     deleteItem, // global delete
     expenses,setExpenses, //  Expenses
-    credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted, //credit
-    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getArchivedDebit,getCompletedDebit, //debits
+    credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted,creditCount ,//credit
+    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getArchivedDebit,getCompletedDebit,debitCount, //debits
     goals,setGoals, //goals
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
     splits,setSplits,completedSplits,setCompletedSplits,  //splits

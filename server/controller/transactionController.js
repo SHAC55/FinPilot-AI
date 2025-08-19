@@ -2,6 +2,7 @@ import Credit from "../models/creditModel.js";
 import Debit from "../models/debitModel.js";
 import Transaction from "../models/transactionModel.js";
 import User from "../models/userModel.js";
+import Archive from "../models/archiveModel.js";
 
 export const addExpense = async (req, res) => {
   try {
@@ -329,5 +330,70 @@ export const getArchivedDebit = async (req, res) => {
     res.json(completedDebits);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// Archive
+export const archiveTransaction = async(req,res) => {
+  try {
+    const { userId } = req.params;
+    const archives = await Archive.find({ userId }).sort({ year: -1, month: -1 });
+
+    // Always respond with array (not undefined/null)
+    return res.status(200).json(archives || []);
+  } catch (err) {
+    console.error("Error fetching archives:", err.message);
+    return res.status(500).json({ error: "Failed to fetch archives" });
+  }
+}
+
+export const manualArchive = async (req, res) => {
+   try {
+    const now = new Date();
+    const month = now.getMonth();   // current month
+    const year = now.getFullYear();
+
+    const startDate = new Date(year, month, 1);
+    const endDate = new Date(year, month + 1, 0, 23, 59, 59);
+
+    console.log("📌 Archiving from", startDate, "to", endDate);
+
+    const transactions = await Transaction.find({
+      date: { $gte: startDate, $lte: endDate },
+    });
+
+    console.log("📌 Found transactions:", transactions.length);
+
+    if (transactions.length === 0) {
+      return res.json({ message: "No transactions found to archive." });
+    }
+
+    // Group by user
+    const userTransactions = {};
+    transactions.forEach((t) => {
+      if (!userTransactions[t.userId]) userTransactions[t.userId] = [];
+      userTransactions[t.userId].push(t);
+    });
+
+    console.log("📌 Grouped by user:", Object.keys(userTransactions));
+
+    // Save archive per user
+    for (const userId in userTransactions) {
+      console.log(`📌 Archiving for user ${userId}`);
+      await Archive.create({
+        userId,
+        month: month + 1,
+        year,
+        transactions: userTransactions[userId],
+      });
+    }
+
+    // Delete them from current Transaction collection
+    await Transaction.deleteMany({ date: { $gte: startDate, $lte: endDate } });
+
+    res.json({ message: "✅ Manual archive completed successfully" });
+  } catch (err) {
+    console.error("❌ Archive error:", err);
+    res.status(500).json({ error: "Failed to archive manually", details: err.message });
   }
 };

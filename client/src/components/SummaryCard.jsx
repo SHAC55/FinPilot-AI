@@ -4,7 +4,7 @@ import { MdOutlinePlaylistAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
 const SummaryCard = () => {
-  const { expenses,credit,debit, getCompletedDebit,getCompletedCredit } = useContext(AppContext);
+  const { expenses,credit,debit, getCompletedDebit,getCompletedCredit,creditCount,debitCount } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() =>  {
@@ -50,14 +50,14 @@ const SummaryCard = () => {
     },
     {
       label: "Credit Remaining",
-      value: credit.length,
+      value: creditCount,
       bg: "bg-yellow-100",
       text: "text-yellow-600",
       navigatePath: "/credit", 
     },
     {
       label: "Debit Remaining",
-      value: debit.length,
+      value: debitCount,
       bg: "bg-purple-100",
       text: "text-purple-600",
       navigatePath: "/debit",

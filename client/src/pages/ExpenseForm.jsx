@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const categories = [
-  "Food", "Transport", "Rent", "Entertainment",
+  'Utilities','Groceries','Salary','Eductaion', "Transport", "Rent", "Entertainment",
   "Shopping", "Medical", "Sports", "Other",
 ];
 

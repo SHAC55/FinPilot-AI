@@ -1,6 +1,6 @@
 import express from 'express'
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addCredit, addDebit, addExpense, deleteCredit, deleteDebit, deleteExpense, getArchivedCredit, getArchivedDebit,getUserCredit, getUserDebit, getUserExpenses, markCreditAsCompleted, markDebitAsCompleted } from '../controller/transactionController.js'
+import { addCredit, addDebit, addExpense, archiveTransaction, deleteCredit, deleteDebit, deleteExpense, getArchivedCredit, getArchivedDebit,getUserCredit, getUserDebit, getUserExpenses, manualArchive, markCreditAsCompleted, markDebitAsCompleted } from '../controller/transactionController.js'
 
 
 const transactionRouter = express.Router()
@@ -23,7 +23,9 @@ transactionRouter.patch('/debit/:id',authMiddleware,markDebitAsCompleted)
 transactionRouter.delete('/delete-debit/:id', authMiddleware, deleteDebit)   
 transactionRouter.get('/getcompletedebit', authMiddleware, getArchivedDebit)
 
-
+// archive
+transactionRouter.get('/archivetransaction/:userId',authMiddleware,archiveTransaction)
+transactionRouter.post('/manual-archive',authMiddleware,manualArchive)
 
 
 
