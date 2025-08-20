@@ -68,29 +68,24 @@ const GetAllSplits = () => {
     }));
   };
 
- const saveParticipantUpdate = async (splitId, participant) => {
+ cconst saveParticipantUpdate = async (splitId, participant) => {
   try {
     const token = localStorage.getItem("token");
 
     const { data } = await axios.patch(
       `${URL}/split/updateAmounts/${splitId}`,
       {
-        participantId: participant.user?._id || participant._id,  // send correct id
-        amountPaid: editData[splitId]?.[participant.user?._id || participant._id]?.amountPaid ?? participant.amountPaid,
-        amountOwed: editData[splitId]?.[participant.user?._id || participant._id]?.amountOwed ?? participant.amountOwed,
+        participantId: participant.user?._id || participant._id, // send correct id
+        amountPaid:
+          editData[splitId]?.[participant.user?._id || participant._id]?.amountPaid ??
+          participant.amountPaid,
+        amountOwed:
+          editData[splitId]?.[participant.user?._id || participant._id]?.amountOwed ??
+          participant.amountOwed,
       },
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    toast.success("Participant updated!");
-  } catch (error) {
-    console.error("Error updating participant:", error.response?.data || error.message);
-    toast.error("Failed to update participant");
-  }
-};
-
-
-    
     toast.success("Participant updated!");
   } catch (error) {
     console.error(
