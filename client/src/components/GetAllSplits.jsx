@@ -69,35 +69,32 @@ const GetAllSplits = () => {
   };
 
   const saveParticipantUpdate = async (splitId, participant) => {
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
+      const participantId = participant._id; // safe
 
-    // safely get participantId
-    const participantId = participant._id;
+      const { data } = await axios.patch(
+        `${URL}/split/updateAmounts/${splitId}`,
+        {
+          participantId,
+          amountPaid: participant.amountPaid,
+          amountOwed: participant.amountOwed,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const { data } = await axios.patch(
-      `https://finpilot-server.onrender.com/api/split/updateAmounts/${splitId}`,
-      {
-        participantId,
-        amountPaid: participant.amountPaid,
-        amountOwed: participant.amountOwed,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    console.log("Update successful:", data);
-    toast.success("Participant updated!");
-  } catch (error) {
-    console.error(
-      "Error updating participant:",
-      error.response?.data || error.message
-    );
-    toast.error("Failed to update participant");
-  }
-};
-
+      console.log("Update successful:", data);
+      toast.success("Participant updated!");
+    } catch (error) {
+      console.error(
+        "Error updating participant:",
+        error.response?.data || error.message
+      );
+      toast.error("Failed to update participant");
+    }
+  };
 
   const markSplitAsCompleted = async (id) => {
     try {
@@ -109,10 +106,8 @@ const GetAllSplits = () => {
       );
 
       if (res.data.success) {
-        // remove from active splits
         setSplits((prev) => prev.filter((split) => split._id !== id));
 
-        // ✅ fix API call to completed splits
         const completedRes = await axios.get(`${URL}/split/completedsplits`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -166,7 +161,7 @@ const GetAllSplits = () => {
                   </h4>
                   <ul className="space-y-2">
                     {split.participants.map((p) => {
-                      const userId = p.user?._id || p._id; // safe fallback
+                      const userId = p.user?._id || p._id;
                       const userEdit = editData[split._id]?.[userId] || {};
 
                       return (
@@ -220,13 +215,11 @@ const GetAllSplits = () => {
                                 className="w-16 text-right border rounded px-1"
                               />
                             </div>
-                            <button
-  onClick={() => saveParticipantUpdate(split._id, p)}
-  className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
->
-  <Save size={14} className="mr-1" /> Save & Notify
-</button>
 
+                            <button
+                              onClick={() => saveParticipantUpdate(split._id, p)}
+                              className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
+                            >
                               <Save size={14} className="mr-1" /> Save & Notify
                             </button>
                           </div>
