@@ -221,7 +221,6 @@ const GetAllSplits = () => {
                               />
                             </div>
                             <button
-                              onClick={() =>
                                 onClick={() => saveParticipantUpdate(split._id, p)}
                               }
                               className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
