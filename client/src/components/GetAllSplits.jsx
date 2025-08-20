@@ -69,32 +69,36 @@ const GetAllSplits = () => {
   };
 
   const saveParticipantUpdate = async (splitId, participant) => {
-    try {
-      const token = localStorage.getItem("token");
-      const participantId = participant._id; // safe
+  try {
+    const token = localStorage.getItem("token");
 
-      const { data } = await axios.patch(
-        `${URL}/split/updateAmounts/${splitId}`,
-        {
-          participantId,
-          amountPaid: participant.amountPaid,
-          amountOwed: participant.amountOwed,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    const { data } = await axios.patch(
+      `${URL}/split/updateAmounts/${splitId}`,
+      {
+        participants: [
+          {
+            _id: participant._id,
+            amountPaid: participant.amountPaid,
+            amountOwed: participant.amountOwed,
+          },
+        ],
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      console.log("Update successful:", data);
-      toast.success("Participant updated!");
-    } catch (error) {
-      console.error(
-        "Error updating participant:",
-        error.response?.data || error.message
-      );
-      toast.error("Failed to update participant");
-    }
-  };
+    
+    toast.success("Participant updated!");
+  } catch (error) {
+    console.error(
+      "Error updating participant:",
+      error.response?.data || error.message
+    );
+    toast.error("Failed to update participant");
+  }
+};
+
 
   const markSplitAsCompleted = async (id) => {
     try {
