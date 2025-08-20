@@ -120,7 +120,7 @@ const saveParticipantUpdate = async (splitId, participant) => {
     return <div className="p-6 text-gray-500">Loading splits...</div>;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="mt-10 space-y-6">
       <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
         💸 All Splits
       </h2>

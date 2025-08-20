@@ -10,7 +10,7 @@ const AddSplitButton = () => {
     <button
     onClick={() => navigate('/addsplit')}
       className="group flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 
-                 text-white rounded-2xl h-[180px] md:w-[300px] w-full shadow-lg hover:shadow-xl 
+                 text-white rounded-2xl h-[170px] md:w-[300px] w-full hover:shadow-lg 
                  transition-all duration-300 transform hover:-translate-y-1"
     >
       <PlusCircle
