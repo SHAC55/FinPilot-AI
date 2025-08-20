@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Users,
   Wallet,
@@ -9,27 +9,23 @@ import {
   Bell,
   Save,
 } from "lucide-react";
-import { useContext } from "react";
 import { AppContext } from "../context/appContext";
 import toast from "react-hot-toast";
 
 const GetAllSplits = () => {
-  const { deleteItem,splits,setSplits,URL,setCompletedSplits } = useContext(AppContext);
+  const { deleteItem, splits, setSplits, URL, setCompletedSplits } =
+    useContext(AppContext);
 
-  
   const [loading, setLoading] = useState(true);
-  const [editData, setEditData] = useState({}); 
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     const fetchAllSplits = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get(
-          `${URL}/split/allsplits`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get(`${URL}/split/allsplits`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setSplits(res.data.data || []);
         console.log(res.data.data);
       } catch (error) {
@@ -42,7 +38,7 @@ const GetAllSplits = () => {
       }
     };
     fetchAllSplits();
-  }, []);
+  }, [URL, setSplits]);
 
   const sendReminder = async (splitId) => {
     const token = localStorage.getItem("token");
@@ -61,12 +57,12 @@ const GetAllSplits = () => {
 
   const handleInputChange = (splitId, userId, field, value) => {
     setEditData((prev) => ({
-      ...prev, // keep all existing splits as they are
-      [splitId]: { // only update this particular split
-        ...prev[splitId], // keep all existing users in this split as they are
-        [userId]: { // only update this particular user
-          ...prev[splitId]?.[userId],  // keep existing fields of the user
-          [field]: value,  // update the specific field with the new value
+      ...prev,
+      [splitId]: {
+        ...prev[splitId],
+        [userId]: {
+          ...prev[splitId]?.[userId],
+          [field]: value,
         },
       },
     }));
@@ -79,14 +75,22 @@ const GetAllSplits = () => {
     if (!updatedParticipant) return;
 
     try {
-      const res = await axios.patch(
+      // ✅ send correct payload with `user`
+      await axios.patch(
         `${URL}/split/updateAmounts/${splitId}`,
-        { participants: [{ userId, ...updatedParticipant }] },
+        { participants: [{ user: userId, ...updatedParticipant }] },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
       toast.success("Participant updated and email sent!");
+
+      // ✅ refetch latest split so UI updates
+      const updated = await axios.get(`${URL}/split/${splitId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setSplits((prev) =>
-        prev.map((s) => (s._id === splitId ? res.data.split : s))
+        prev.map((s) => (s._id === splitId ? updated.data.split : s))
       );
     } catch (err) {
       console.error(err.response?.data || err.message);
@@ -94,27 +98,29 @@ const GetAllSplits = () => {
     }
   };
 
- const markSplitAsCompleted = async (id) => {
-  try {
-    const  token =  localStorage.getItem("token")
-    const res = await axios.patch(`${URL}/split/${id}`, {}, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
+  const markSplitAsCompleted = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.patch(
+        `${URL}/split/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    if (res.data.success) {
-      // Remove from active splits
-      setSplits((prev) => prev.filter((split) => split._id !== id));
-      // Refetch completed splits from backend to sync state
-      const completedRes = await axios.get("/api/split/completedsplits", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setCompletedSplits(completedRes.data);
+      if (res.data.success) {
+        // remove from active splits
+        setSplits((prev) => prev.filter((split) => split._id !== id));
+
+        // ✅ fix API call to completed splits
+        const completedRes = await axios.get(`${URL}/split/completedsplits`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCompletedSplits(completedRes.data);
+      }
+    } catch (error) {
+      console.error("Error marking split as completed", error);
     }
-  } catch (error) {
-    console.error("Error marking split as completed", error);
-  }
-};
-
+  };
 
   if (loading)
     return <div className="p-6 text-gray-500">Loading splits...</div>;
@@ -159,10 +165,12 @@ const GetAllSplits = () => {
                   </h4>
                   <ul className="space-y-2">
                     {split.participants.map((p) => {
-                      const userEdit = editData[split._id]?.[p.user._id] || {};
+                      const userId = p.user?._id || p._id; // safe fallback
+                      const userEdit = editData[split._id]?.[userId] || {};
+
                       return (
                         <li
-                           key={`${split._id}-${p.user?._id || p.email}`}
+                          key={`${split._id}-${userId}`}
                           className="flex justify-between items-center text-sm bg-white rounded-lg p-2 shadow-sm"
                         >
                           <div>
@@ -171,13 +179,13 @@ const GetAllSplits = () => {
                                 size={18}
                                 className="text-gray-500 mr-2"
                               />
-                              {p.username || "Unknown"}
+                              {p.username || p.user?.username || "Unknown"}
                             </span>
                             <span className="flex items-center">
-                              {/* <UserCircle2 size={18} className="text-gray-500 mr-2" /> */}
-                              {p.email || "Unknown"}
+                              {p.email || p.user?.email || "Unknown"}
                             </span>
                           </div>
+
                           <div className="flex flex-col items-end gap-1">
                             <div className="flex gap-2 text-xs text-gray-500">
                               Paid:
@@ -187,7 +195,7 @@ const GetAllSplits = () => {
                                 onChange={(e) =>
                                   handleInputChange(
                                     split._id,
-                                    p.user._id,
+                                    userId,
                                     "amountPaid",
                                     Number(e.target.value)
                                   )
@@ -203,7 +211,7 @@ const GetAllSplits = () => {
                                 onChange={(e) =>
                                   handleInputChange(
                                     split._id,
-                                    p.user._id,
+                                    userId,
                                     "amountOwed",
                                     Number(e.target.value)
                                   )
@@ -213,7 +221,7 @@ const GetAllSplits = () => {
                             </div>
                             <button
                               onClick={() =>
-                                saveParticipantUpdate(split._id, p.user._id)
+                                saveParticipantUpdate(split._id, userId)
                               }
                               className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
                             >
@@ -229,10 +237,6 @@ const GetAllSplits = () => {
 
               {/* Actions */}
               <div className="mt-4 flex justify-between items-center border-t pt-4">
-                {/* <button className="flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  <Pencil size={16} className="mr-1" /> Update
-                </button> */}
-
                 <button
                   onClick={() =>
                     deleteItem("split/deletesplit", split._id, setSplits)
@@ -243,8 +247,9 @@ const GetAllSplits = () => {
                 </button>
 
                 <button
-                onClick={() =>  markSplitAsCompleted(split._id)}
-                className="flex items-center text-green-600 hover:text-green-800 text-sm font-medium">
+                  onClick={() => markSplitAsCompleted(split._id)}
+                  className="flex items-center text-green-600 hover:text-green-800 text-sm font-medium"
+                >
                   <CheckCircle size={16} className="mr-1" /> Completed
                 </button>
 
