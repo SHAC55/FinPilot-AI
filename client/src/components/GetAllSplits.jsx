@@ -68,7 +68,7 @@ const GetAllSplits = () => {
     }));
   };
 
- cconst saveParticipantUpdate = async (splitId, participant) => {
+ const saveParticipantUpdate = async (splitId, participant) => {
   try {
     const token = localStorage.getItem("token");
 
