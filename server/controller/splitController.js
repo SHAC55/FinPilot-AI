@@ -1,6 +1,7 @@
 import Split from "../models/splitModel.js";
 import mongoose from "mongoose";
 import nodemailer from "nodemailer";
+import { sendEmail } from "../utils/emailService.js";
 
 export const addSplit = async (req, res) => {
   try {
@@ -15,14 +16,13 @@ export const addSplit = async (req, res) => {
     }
 
     // Convert participants.user to ObjectId
-   const formattedParticipants = participants.map((p) => ({
-  createdBy: new mongoose.Types.ObjectId(userId),
-  username: p.username,
-  email: p.email,
-  amountPaid: Number(p.amountPaid) || 0,
-  amountOwed: Number(p.amountOwed) || 0,
-}));
-
+    const formattedParticipants = participants.map((p) => ({
+      createdBy: new mongoose.Types.ObjectId(userId),
+      username: p.username,
+      email: p.email,
+      amountPaid: Number(p.amountPaid) || 0,
+      amountOwed: Number(p.amountOwed) || 0,
+    }));
 
     const newSplit = new Split({
       title,
@@ -157,108 +157,101 @@ export const updateSplit = async (req, res) => {
   }
 };
 
-export const sendReminder = async (req, res) => {
-  try {
-    const split = await Split.findById(req.params.id).populate(
-      "participants.user"
-    );
-    if (!split) return res.status(404).json({ message: "Split not found" });
+// export const sendReminder = async (req, res) => {
+//   try {
+//     const split = await Split.findById(req.params.id).populate(
+//       "participants.user"
+//     );
+//     if (!split) return res.status(404).json({ message: "Split not found" });
 
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
 
-    const emailPromises = split.participants
-      .filter((p) => p.user && p.user.email && p.amountOwed > 0)
-      .map((p) => {
-        return transporter.sendMail({
-          from: `"FinPilot AI" <${process.env.EMAIL_USER}>`,
-          to: p.user.email,
-          subject: `Reminder: Payment for ${split.title}`,
-          text: `Hi ${
-            p.user.username || "User"
-          },\n\nThis is a friendly reminder that you owe ₹${
-            p.amountOwed
-          } for "${split.title}".\n\nThanks!`,
-        });
-      });
+//     const emailPromises = split.participants
+//       .filter((p) => p.user && p.user.email && p.amountOwed > 0)
+//       .map((p) => {
+//         return transporter.sendMail({
+//           from: `"FinPilot AI" <${process.env.EMAIL_USER}>`,
+//           to: p.user.email,
+//           subject: `Reminder: Payment for ${split.title}`,
+//           text: `Hi ${
+//             p.user.username || "User"
+//           },\n\nThis is a friendly reminder that you owe ₹${
+//             p.amountOwed
+//           } for "${split.title}".\n\nThanks!`,
+//         });
+//       });
 
-    await Promise.all(emailPromises);
-    res.json({ message: "Reminders sent successfully" });
-  } catch (err) {
-    console.error("SendReminder Error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
+//     await Promise.all(emailPromises);
+//     res.json({ message: "Reminders sent successfully" });
+//   } catch (err) {
+//     console.error("SendReminder Error:", err);
+//     res.status(500).json({ message: "Server error", error: err.message });
+//   }
+// };
 
 export const updateAmountsAndNotify = async (req, res) => {
   try {
-    const { participants } = req.body;
-    
-    const split = await Split.findById(req.params.id).populate(
-      "participants.user"
-    );
-    if (!split) return res.status(404).json({ message: "Split not found" });
+    const splitId = req.params.id;
+    const { participantId, amountPaid, amountOwed } = req.body;
 
-    // Create Nodemailer transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    const split = await Split.findById(splitId).populate("participants.user");
+    if (!split) {
+      return res.status(404).json({ message: "Split not found" });
+    }
 
-    // Update participants & send emails
-    const emailPromises = [];
+    let updatedParticipant = null;
 
-    participants.forEach((pUpdate) => {
-      const participant = split.participants.find(
-        (p) => p.user._id.toString() === pUpdate.userId
-      );
-      if (participant) {
-        if (pUpdate.amountPaid !== undefined)
-          participant.amountPaid = pUpdate.amountPaid;
-        if (pUpdate.amountOwed !== undefined)
-          participant.amountOwed = pUpdate.amountOwed;
-
-        // Only send email if participant has a valid email
-        if (participant.user.email) {
-          const mailOptions = {
-            from: `"Split App" <${process.env.EMAIL_USER}>`,
-            to: participant.user.email,
-            subject: `Update: Payment for ${split.title}`,
-            text: `Hi ${participant.user.name || "User"},\n\nYour split "${
-              split.title
-            }" has been updated.\nPaid: ₹${participant.amountPaid}\nOwes: ₹${
-              participant.amountOwed
-            }\n\nThanks!`,
-          };
-          emailPromises.push(transporter.sendMail(mailOptions));
-        }
+    split.participants.forEach((p) => {
+      const idToCheck = p.user ? p.user._id.toString() : p._id.toString();
+      if (idToCheck === participantId) {
+        if (amountPaid !== undefined) p.amountPaid = amountPaid;
+        if (amountOwed !== undefined) p.amountOwed = amountOwed;
+        updatedParticipant = p;
       }
     });
 
-    // Update totals
-    split.totalPaid = split.participants.reduce(
-      (sum, p) => sum + p.amountPaid,
-      0
-    );
-    split.totalRemaining = split.totalAmount - split.totalPaid;
+    if (!updatedParticipant) {
+      return res.status(404).json({ message: "Participant not found" });
+    }
 
     await split.save();
 
-    // Send all emails
-    await Promise.all(emailPromises);
+    // ✅ Use your sendEmail util
+    const recipientEmail =
+      updatedParticipant.user?.email || updatedParticipant.email;
 
-    res.json({ message: "Amounts updated and emails sent", split });
-  } catch (err) {
-    console.error("updateAmountsAndNotify Error:", err);
-    res.status(500).json({ message: "Server error", error: err.message });
+    console.log("📩 Sending email to:", recipientEmail);
+
+    if (recipientEmail) {
+      await sendEmail({
+        from: "finpilot@yourapp.com",
+        to: recipientEmail,
+        subject: `Update for split: ${split.title}`,
+        text: `Hi ${
+          updatedParticipant.user?.username ||
+          updatedParticipant.username ||
+          "User"
+        },\n\nYour ${split.title} payment status has been updated:\nPaid: ₹${
+          updatedParticipant.amountPaid
+        }\nOwes: ₹${updatedParticipant.amountOwed}\n\nRegards,\nFinPilot`,
+      });
+    } else {
+      console.warn("⚠️ No email found for participant:", updatedParticipant);
+    }
+
+    res.json({
+      message: "Successfully updated & notified via email",
+      split,
+    });
+  } catch (error) {
+    console.error("Update error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -301,4 +294,3 @@ export const getCompletedSplits = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-

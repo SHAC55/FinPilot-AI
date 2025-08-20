@@ -7,7 +7,7 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
 
-  const  URL  =  'https://finpilot-server.onrender.com/api'
+  const  URL  =  'http://localhost:5000/api' //https://finpilot-server.onrender.com/api
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
@@ -31,6 +31,7 @@ const AppProvider = ({ children }) => {
   const debitCount  =  debit.length ;  
 
   const  navigate =  useNavigate()
+  
   const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
