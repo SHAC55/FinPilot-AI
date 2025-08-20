@@ -68,32 +68,33 @@ const GetAllSplits = () => {
     }));
   };
 
-  const saveParticipantUpdate = async (splitId, userId) => {
-    const token = localStorage.getItem("token");
-    const updatedParticipant = editData[splitId]?.[userId];
-
-    if (!updatedParticipant) return;
-
+  const saveParticipantUpdate = async (splitId, participant) => {
     try {
-      // ✅ send correct payload with `user`
-      await axios.patch(
-        `${URL}/split/updateAmounts/${splitId}`,
-        { participants: [{ user: userId, ...updatedParticipant }] },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const token = localStorage.getItem("token");
+
+      // safely get userId (works whether backend returns user._id or _id directly)
+      const userId = participant.user?._id || participant._id;
+
+      const { data } = await axios.patch(
+        `https://finpilot-server.onrender.com/api/split/updateAmounts/${splitId}`,
+        {
+          participants: [
+            {
+              user: { _id: userId }, // ✅ backend expects this shape
+              amountPaid: participant.amountPaid,
+              amountOwed: participant.amountOwed,
+            },
+          ],
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-      toast.success("Participant updated and email sent!");
-
-      // ✅ refetch latest split so UI updates
-      const updated = await axios.get(`${URL}/split/${splitId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setSplits((prev) =>
-        prev.map((s) => (s._id === splitId ? updated.data.split : s))
-      );
-    } catch (err) {
-      console.error(err.response?.data || err.message);
+      console.log("Update successful:", data);
+      toast.success("Participant updated!");
+    } catch (error) {
+      console.error("Error updating participant:", error.response?.data || error.message);
       toast.error("Failed to update participant");
     }
   };
