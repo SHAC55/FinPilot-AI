@@ -193,4 +193,45 @@ export const addFund = async (req, res) => {
   }
 };
 
+export const markGoalAsCompleted = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedGoal = await Goal.findByIdAndUpdate(
+      id,
+      { completed: true },
+      { new: true }
+    );
+
+    if (!updatedGoal) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Goal not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Goal marked as completed",
+      data: updatedGoal,   // ✅ correct variable
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+export const getCompletedGoal = async (req, res) => {
+  try {
+    const completedGoal = await Goal.find({
+      userId: req.user.id,
+      completed: true,
+    });
+
+    res.json(completedGoal);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 

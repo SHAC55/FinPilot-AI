@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const AllGoals = () => {
-  const { goals, setGoals, deleteItem,URL } = useContext(AppContext);
+  const { goals, setGoals, deleteItem,URL,markGoalAsCompleted } = useContext(AppContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,26 +54,6 @@ const AllGoals = () => {
     } catch (err) {
       console.error("Error adding funds:", err);
       toast.error("Server error while adding funds");
-    }
-  };
-
-  const handleMarkCompleted = async (id) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${URL}/goal/complete/${id}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setGoals((prev) =>
-        prev.map((goal) =>
-          goal._id === id ? { ...goal, completed: true } : goal
-        )
-      );
-    } catch (err) {
-      console.error("Error marking goal completed:", err);
     }
   };
 
@@ -138,7 +118,7 @@ const AllGoals = () => {
               </button>
               {!goal.completed && (
                 <button
-                  onClick={() => handleMarkCompleted(goal._id)}
+                  onClick={() => markGoalAsCompleted(goal._id)}
                   className="px-3 py-1 bg-purple-500 text-white rounded-lg text-sm hover:bg-purple-600"
                 >
                   Mark Completed

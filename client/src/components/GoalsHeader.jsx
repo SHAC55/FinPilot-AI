@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus } from 'lucide-react';
 import { useNavigate }  from 'react-router-dom'
+import { GoGoal } from "react-icons/go";
 
 const GoalsHeader = () => {
 
@@ -15,11 +16,19 @@ const GoalsHeader = () => {
       </h1>
 
       {/* Add Goal Button */}
+      <div className='flex gap-2'>
+        {/* <button onClick={() => navigate('/completedgoals')} 
+      className="flex items-center gap-2 bg-white text-indigo-600 px-5 py-2 rounded-full font-semibold shadow-md hover:shadow-lg hover:bg-indigo-50 transition-all duration-300">
+        <GoGoal size={20} />
+        Completed Goal
+      </button> */}
+
       <button onClick={() => navigate('/addgoal')} 
       className="flex items-center gap-2 bg-white text-indigo-600 px-5 py-2 rounded-full font-semibold shadow-md hover:shadow-lg hover:bg-indigo-50 transition-all duration-300">
         <Plus size={20} />
         Add Goal
       </button>
+      </div>
 
     </div>
   );

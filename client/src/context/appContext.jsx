@@ -20,6 +20,7 @@ const AppProvider = ({ children }) => {
   const [archiveDebit, setArchiveDebit] = useState([]);
 
   const [goals, setGoals] = useState([]);
+  const [completeGoals, setCompletedGoals] = useState([]);
 
   const [bills, setBills] = useState([]);
   const [completedBills, setCompletedBills] = useState([]);
@@ -190,6 +191,45 @@ const AppProvider = ({ children }) => {
     }
   };
 
+const markGoalAsCompleted = async (id) => {
+  try {
+    const res = await axios.patch(
+      `${URL}/goal/${id}`,
+      {},
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+
+    if (res.data.success) {
+      const completed = res.data.data;
+
+      // ✅ Remove from active list
+      setGoals((prev) => prev.filter((goal) => goal._id !== id));
+
+      // ✅ Add to completed list
+      setCompletedGoals((prev) => [...prev, completed]);
+    }
+  } catch (error) {
+    console.error("Error in marking goal as completed", error);
+  }
+};
+
+  const getCompletedGoals = async () => {
+  try {
+    const res = await axios.get(`${URL}/goal/completedgoals`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (res.data) {
+      setCompletedGoals(res.data);
+      return res.data;   // ✅ return the data so component can use it
+    }
+  } catch (error) {
+    console.error("Error fetching completed goals:", error);
+    return [];
+  }
+};
+
+
   // User search
 
   const[searchUser,setSearchUser] = useState([])
@@ -211,7 +251,7 @@ const AppProvider = ({ children }) => {
     expenses,setExpenses, //  Expenses
     credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted,creditCount ,//credit
     debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getCompletedDebit,debitCount, //debits
-    goals,setGoals, //goals
+    goals,setGoals,completeGoals,setCompletedGoals,markGoalAsCompleted,getCompletedGoals, //goals
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
     splits,setSplits,completedSplits,setCompletedSplits,  //splits
     searchUser,setSearchUser,

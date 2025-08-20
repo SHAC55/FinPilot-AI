@@ -27,6 +27,7 @@ import AddSplitForm from "./pages/AddSplitForm";
 import ArchivedSplits from "./pages/ArchivedSplits";
 import { useEffect } from "react";
 import PrivateRoute from "./components/PrivateRoute";
+import CompletedGoal from "./pages/CompletedGoal";
 
 const App = () => {
   const location = useLocation();
@@ -213,6 +214,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <AddSplitForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/completedgoals"
+          element={
+            <PrivateRoute>
+              <CompletedGoal />
             </PrivateRoute>
           }
         />

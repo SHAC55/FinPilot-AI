@@ -34,9 +34,9 @@ const CompletedBill = () => {
 
       {/* Bottom Section */}
       <div className="flex items-center justify-between">
-        <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-200">
+        {/* <span className="px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-200">
           98% On-Time
-        </span>
+        </span> */}
 
         <button
         onClick={()  => navigate('/completedbills')  }

@@ -50,7 +50,7 @@ import { AppContext } from "../context/appContext";
     if (!insight) return null;
 
     return (
-      <div className="w-full mt-7 h-[555px] bg-white rounded-2xl p-6 flex flex-col gap-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+      <div className="w-full mt-7 md:h-[555px] h-fit bg-white rounded-2xl p-6 flex flex-col gap-4 border border-gray-100 hover:shadow-xl transition-shadow duration-300">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-yellow-100 rounded-lg">
