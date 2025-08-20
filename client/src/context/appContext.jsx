@@ -191,7 +191,8 @@ const AppProvider = ({ children }) => {
     }
   };
 
-const markGoalAsCompleted = async (id) => {
+  // goals
+  const markGoalAsCompleted = async (id) => {
   try {
     const res = await axios.patch(
       `${URL}/goal/${id}`,
@@ -211,7 +212,7 @@ const markGoalAsCompleted = async (id) => {
   } catch (error) {
     console.error("Error in marking goal as completed", error);
   }
-};
+  };
 
   const getCompletedGoals = async () => {
   try {
@@ -227,7 +228,51 @@ const markGoalAsCompleted = async (id) => {
     console.error("Error fetching completed goals:", error);
     return [];
   }
+  };
+
+  // splits
+  const markSplitAsCompleted = async (id) => {
+  try {
+    const res = await axios.patch(
+      `${URL}/split/markcompleted/${id}`,
+      {},
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+
+    if (res.data.success) {
+      const completed = res.data.data;
+
+      // ✅ remove from active list
+      setSplits((prev) => prev.filter((s) => s._id !== id));
+
+      // ✅ add to completed list
+      setCompletedSplits((prev) => [...prev, completed]);
+    }
+  } catch (err) {
+    console.error("Error completing split:", err);
+  }
+};        
+
+  const getCompletedSplits = async () => {
+ try {
+    const res = await axios.get(`${URL}/split/completedsplits`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (res.data && res.data.success) {
+      setCompletedSplits(res.data.data);
+      console.log(completedSplits)
+    } else {
+      setCompletedSplits([]);
+    }
+  } catch (error) {
+    console.error("Error ", error);
+  }
 };
+
+
+
+
 
 
   // User search
@@ -253,7 +298,7 @@ const markGoalAsCompleted = async (id) => {
     debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getCompletedDebit,debitCount, //debits
     goals,setGoals,completeGoals,setCompletedGoals,markGoalAsCompleted,getCompletedGoals, //goals
     bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
-    splits,setSplits,completedSplits,setCompletedSplits,  //splits
+    splits,setSplits,completedSplits,setCompletedSplits,markSplitAsCompleted,getCompletedSplits,//splits
     searchUser,setSearchUser,
     participants,setParticipants,addParticipant //splits
   };

@@ -1,6 +1,6 @@
 import express from  'express'
 import authMiddleware from '../middleware/authMiddleware.js'
-import { addSplit, deleteSplit, fetchAllSplits, getCompletedSplits, markSplitAsCompleted, updateAmountsAndNotify,  } from '../controller/splitController.js';
+import { addSplit, deleteSplit, fetchAllSplits, getCompletedSplits, markSplitAsCompleted, updateAmountsAndNotify } from '../controller/splitController.js';
 
 
 const splitRouter = express.Router()
@@ -10,7 +10,7 @@ splitRouter.post('/add-split',authMiddleware,addSplit)
 splitRouter.get('/allsplits',authMiddleware,fetchAllSplits)
 splitRouter.delete('/deletesplit/:id',authMiddleware,deleteSplit)
 splitRouter.patch("/updateAmounts/:id", authMiddleware,updateAmountsAndNotify);
-splitRouter.patch("/:id", authMiddleware,markSplitAsCompleted);
+splitRouter.patch("/markcompleted/:id", authMiddleware,markSplitAsCompleted);
 splitRouter.get('/completedsplits',authMiddleware,getCompletedSplits)
 
 

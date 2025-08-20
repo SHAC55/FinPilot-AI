@@ -11,10 +11,17 @@ import {
 } from "lucide-react";
 import { AppContext } from "../context/appContext";
 import toast from "react-hot-toast";
+import AddSplitButton from "./AddSplitButton";
 
 const GetAllSplits = () => {
-  const { deleteItem, splits, setSplits, URL, setCompletedSplits } =
-    useContext(AppContext);
+  const {
+    deleteItem,
+    splits,
+    setSplits,
+    URL,
+    setCompletedSplits,
+    markSplitAsCompleted,
+  } = useContext(AppContext);
 
   const [loading, setLoading] = useState(true);
   const [editData, setEditData] = useState({});
@@ -68,51 +75,28 @@ const GetAllSplits = () => {
     }));
   };
 
-const saveParticipantUpdate = async (splitId, participant) => {
-  try {
-    const token = localStorage.getItem("token");
-
-    const userId = participant.user?._id || participant._id;
-    const { amountPaid, amountOwed } = editData[splitId]?.[userId] || {};
-
-    const { data } = await axios.patch(
-      `${URL}/split/updateAmounts/${splitId}`,
-      {
-        participantId: userId,
-        amountPaid: amountPaid ?? participant.amountPaid,
-        amountOwed: amountOwed ?? participant.amountOwed,
-      },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    // console.log("Update success:", data);
-    toast.success("Amounts updated & Reminder send successfully");
-  } catch (err) {
-    console.error("Error updating participant:", err.response?.data || err);
-    toast.error("Failed to update participant");
-  }
-};
-
-
-  const markSplitAsCompleted = async (id) => {
+  const saveParticipantUpdate = async (splitId, participant) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.patch(
-        `${URL}/split/${id}`,
-        {},
+
+      const userId = participant.user?._id || participant._id;
+      const { amountPaid, amountOwed } = editData[splitId]?.[userId] || {};
+
+      const { data } = await axios.patch(
+        `${URL}/split/updateAmounts/${splitId}`,
+        {
+          participantId: userId,
+          amountPaid: amountPaid ?? participant.amountPaid,
+          amountOwed: amountOwed ?? participant.amountOwed,
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (res.data.success) {
-        setSplits((prev) => prev.filter((split) => split._id !== id));
-
-        const completedRes = await axios.get(`${URL}/split/completedsplits`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCompletedSplits(completedRes.data);
-      }
-    } catch (error) {
-      console.error("Error marking split as completed", error);
+      // console.log("Update success:", data);
+      toast.success("Amounts updated & Reminder send successfully");
+    } catch (err) {
+      console.error("Error updating participant:", err.response?.data || err);
+      toast.error("Failed to update participant");
     }
   };
 
@@ -121,9 +105,18 @@ const saveParticipantUpdate = async (splitId, participant) => {
 
   return (
     <div className="mt-10 space-y-6">
-      <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
-        💸 All Splits
-      </h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-indigo-50 to-white p-5 rounded-2xl shadow-sm border border-gray-200">
+        {/* Title */}
+        <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800 tracking-tight flex items-center gap-2">
+          <span className="text-indigo-600">💸</span>
+          All Splits
+        </h2>
+
+        {/* Button */}
+        <div className="flex justify-start md:justify-end">
+          <AddSplitButton />
+        </div>
+      </div>
 
       {splits.length === 0 ? (
         <p className="text-gray-500">No splits found</p>
@@ -215,7 +208,9 @@ const saveParticipantUpdate = async (splitId, participant) => {
                             </div>
 
                             <button
-                              onClick={() => saveParticipantUpdate(split._id, p)}
+                              onClick={() =>
+                                saveParticipantUpdate(split._id, p)
+                              }
                               className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
                             >
                               <Save size={14} className="mr-1" /> Save & Notify

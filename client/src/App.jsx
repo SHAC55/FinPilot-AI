@@ -23,11 +23,11 @@ import BillRemiander from "./pages/BillRemiander";
 import AddBillForm from "./pages/AddBillForm";
 import CompletedBill from "./components/CompletedBill";
 import CompletedBillsArchive from "./pages/CompletedBillsArchive";
-import AddSplitForm from "./pages/AddSplitForm";
-import ArchivedSplits from "./pages/ArchivedSplits";
+import AddSplitForm from "./pages/AddSplitForm";;
 import { useEffect } from "react";
 import PrivateRoute from "./components/PrivateRoute";
 import CompletedGoal from "./pages/CompletedGoal";
+import CompletedSplits from "./pages/CompletedSplits";
 
 const App = () => {
   const location = useLocation();
@@ -229,7 +229,7 @@ const App = () => {
           path="/completedsplits"
           element={
             <PrivateRoute>
-              <ArchivedSplits />
+              <CompletedSplits />
             </PrivateRoute>
           }
         />

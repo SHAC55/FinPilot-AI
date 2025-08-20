@@ -95,6 +95,7 @@ export const fetchAllSplits = async (req, res) => {
   try {
     const split = await Split.find({
       $or: [{ createdBy: userId }, { "participants.user": userId }],
+       completed: false,
     })
       .populate("participants.user", "name email")
       .populate("createdBy", "name email")
@@ -256,10 +257,10 @@ export const updateAmountsAndNotify = async (req, res) => {
 };
 
 export const markSplitAsCompleted = async (req, res) => {
-  try {
+ try {
     const { id } = req.params;
 
-    const updatedSplit = await Split.findByIdAndUpdate(
+    const updatedSplit= await Split.findByIdAndUpdate(
       id,
       { completed: true },
       { new: true }
@@ -277,20 +278,25 @@ export const markSplitAsCompleted = async (req, res) => {
       data: updatedSplit,
     });
   } catch (error) {
-    console.error("Error marking as completed:", error);
+    console.error("Error ", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-export const getCompletedSplits = async (req, res) => {
-  try {
-    const completedSplits = await Split.find({
+
+export const getCompletedSplits = async (req, res) => { 
+   try {
+    const completedsplits = await Split.find({
       userId: req.user.id,
       completed: true,
     });
 
-    res.json(completedSplits);
+    res.status(200).json({
+      success: true,
+      data: completedsplits,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+

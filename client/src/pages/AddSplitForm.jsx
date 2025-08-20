@@ -210,7 +210,7 @@ const AddSplitForm = ({  }) => {
                 </div>
 
                 {/* Paid & Owed */}
-                <label className="flex flex-col text-gray-400">
+                <label className="flex flex-col  text-gray-400">
                   Paid
                   <input
                     type="number"
