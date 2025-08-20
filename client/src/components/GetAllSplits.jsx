@@ -69,35 +69,35 @@ const GetAllSplits = () => {
   };
 
   const saveParticipantUpdate = async (splitId, participant) => {
-    try {
-      const token = localStorage.getItem("token");
+  try {
+    const token = localStorage.getItem("token");
 
-      // safely get userId (works whether backend returns user._id or _id directly)
-      const userId = participant.user?._id || participant._id;
+    // safely get participantId
+    const participantId = participant._id;
 
-      const { data } = await axios.patch(
-        `https://finpilot-server.onrender.com/api/split/updateAmounts/${splitId}`,
-        {
-          participants: [
-            {
-              user: { _id: userId }, // ✅ backend expects this shape
-              amountPaid: participant.amountPaid,
-              amountOwed: participant.amountOwed,
-            },
-          ],
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    const { data } = await axios.patch(
+      `https://finpilot-server.onrender.com/api/split/updateAmounts/${splitId}`,
+      {
+        participantId,
+        amountPaid: participant.amountPaid,
+        amountOwed: participant.amountOwed,
+      },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      console.log("Update successful:", data);
-      toast.success("Participant updated!");
-    } catch (error) {
-      console.error("Error updating participant:", error.response?.data || error.message);
-      toast.error("Failed to update participant");
-    }
-  };
+    console.log("Update successful:", data);
+    toast.success("Participant updated!");
+  } catch (error) {
+    console.error(
+      "Error updating participant:",
+      error.response?.data || error.message
+    );
+    toast.error("Failed to update participant");
+  }
+};
+
 
   const markSplitAsCompleted = async (id) => {
     try {
@@ -222,7 +222,7 @@ const GetAllSplits = () => {
                             </div>
                             <button
                               onClick={() =>
-                                saveParticipantUpdate(split._id, userId)
+                                onClick={() => saveParticipantUpdate(split._id, p)}
                               }
                               className="flex items-center text-green-600 hover:text-green-800 text-xs font-medium mt-1"
                             >
