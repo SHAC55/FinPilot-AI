@@ -1,15 +1,16 @@
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+
 import Navbar from "./components/Navbar";
+
 import Dashboard from "./pages/Dashboard";
-import Expense from "./pages/Expense";
 import Split from "./pages/Split";
 import PlanGoal from "./pages/PlanGoal";
-import Archive from "./pages/Archive";
 import ExpenseForm from "./pages/ExpenseForm";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import { Toaster } from "react-hot-toast";
 import Credit from "./pages/Credit";
 import Debit from "./pages/Debit";
 import CreditForm from "./pages/CreditForm";
@@ -25,8 +26,12 @@ import CompletedBill from "./components/CompletedBill";
 import CompletedBillsArchive from "./pages/CompletedBillsArchive";
 import AddSplitForm from "./pages/AddSplitForm";
 import ArchivedSplits from "./pages/ArchivedSplits";
-import { useEffect } from "react";
 import PrivateRoute from "./components/PrivateRoute";
+import Transaction from "./pages/Transaction";
+import Wallet from "./pages/Wallet";
+import AddWalletForm from "./pages/AddWalletForm";
+import WalletDetail from "./pages/WalletDetail";
+import WalletDetails from "./pages/WalletDetail";
 
 const App = () => {
   const location = useLocation();
@@ -47,6 +52,9 @@ const App = () => {
     "/login",
     "/Register",
     "/expense-form",
+    "/profile",
+    "/addwallet",
+    "/addtransaction"
   ];
 
   const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
@@ -73,10 +81,10 @@ const App = () => {
           }
         />
         <Route
-          path="/expense"
+          path="/transaction"
           element={
             <PrivateRoute>
-              <Expense />
+              <Transaction />
             </PrivateRoute>
           }
         />
@@ -97,13 +105,30 @@ const App = () => {
           }
         />
         <Route
-          path="/archive"
+          path="/wallet"
           element={
             <PrivateRoute>
-              <Archive />
+              <Wallet />
             </PrivateRoute>
           }
         />
+        <Route
+          path="/addwallet"
+          element={
+            <PrivateRoute>
+              <AddWalletForm />
+            </PrivateRoute>
+          }
+        />
+         <Route
+          path="/wallet/:id"
+          element={
+            <PrivateRoute>
+              <WalletDetails />
+            </PrivateRoute>
+          }
+        />
+        
         <Route
           path="/profile"
           element={
@@ -113,7 +138,7 @@ const App = () => {
           }
         />
         <Route
-          path="/transaction-form"
+          path="/addtransaction"
           element={
             <PrivateRoute>
               <ExpenseForm />

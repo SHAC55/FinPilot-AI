@@ -1,23 +1,12 @@
-import Credit from "../models/creditModel.js";
-import Debit from "../models/debitModel.js";
 import Transaction from "../models/transactionModel.js";
 import User from "../models/userModel.js";
-import Archive from "../models/archiveModel.js";
 
-export const addExpense = async (req, res) => {
+
+import Wallet from "../models/walletModel.js";
+
+export const addTransaction = async (req, res) => {
   try {
-    const { title, amount, date, category, method, notes, type } = req.body;
-
-    // Validation
-    if (!title || !amount || !date || !type) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill required fields",
-      });
-    }
-
-    // Create and save expense/income
-    const expense = new Transaction({
+    const {
       title,
       amount,
       date,
@@ -25,22 +14,72 @@ export const addExpense = async (req, res) => {
       method,
       notes,
       type,
+      wallet,
+    } = req.body;
+
+    //  Validation
+    if (!title || !amount || !date || !type || !wallet) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all required fields",
+      });
+    }
+
+    // Convert amount to number (FIXED)
+    const numericAmount = Number(amount);
+
+    if (isNaN(numericAmount)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid amount",
+      });
+    }
+
+    //  Find wallet
+    const walletData = await Wallet.findById(wallet);
+
+    if (!walletData) {
+      return res.status(404).json({
+        success: false,
+        message: "Wallet not found",
+      });
+    }
+
+    //  Create transaction
+    const transaction = new Transaction({
+      title,
+      amount: numericAmount, 
+      date,
+      category,
+      method,
+      notes,
+      type,
       userId: req.user._id,
+      wallet,
     });
 
-    const savedExpense = await expense.save();
+    const savedTransaction = await transaction.save();
 
-    await User.findByIdAndUpdate(req.user._id, {
-      $push: { expenses: savedExpense._id },
-    });
+    //  Update wallet balance (FIXED)
+    if (type === "expense") {
+      walletData.balance -= numericAmount;
+      walletData.spent += numericAmount;
+    } else {
+      walletData.balance += numericAmount;
+    }
+
+    await walletData.save();
 
     res.status(201).json({
       success: true,
-      message: `${type === "income" ? "Income" : "Expense"} added successfully`,
-      data: savedExpense,
+      message:
+        type === "income"
+          ? "Income added successfully"
+          : "Expense added successfully",
+      data: savedTransaction,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Add Transaction Error:", error);
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -69,331 +108,46 @@ export const deleteExpense = async (req, res) => {
     const { id } = req.params;
     const userId = req.user._id;
 
-    const expense = await Transaction.findOne({ _id: id, userId });
+    const transaction = await Transaction.findOne({ _id: id, userId });
 
-    if (!expense) {
+    if (!transaction) {
       return res.status(404).json({
         success: false,
-        message: "Expense not found or unauthorized",
+        message: "Transaction not found",
       });
     }
 
-    await Transaction.findByIdAndDelete(id);
+    // ✅ find wallet
+    const wallet = await Wallet.findById(transaction.wallet);
 
-    await User.findByIdAndUpdate(userId, {
-      $pull: { expenses: id },
-    });
+    if (!wallet) {
+      return res.status(404).json({
+        success: false,
+        message: "Wallet not found",
+      });
+    }
+
+    //  reverse balance
+    if (transaction.type === "expense") {
+      wallet.balance += transaction.amount;
+      wallet.spent -= transaction.amount;
+    } else {
+      wallet.balance -= transaction.amount;
+    }
+
+    await wallet.save();
+
+    await Transaction.findByIdAndDelete(id);
 
     res.status(200).json({
       success: true,
-      message: "Expense deleted successfully",
+      message: "Transaction deleted successfully",
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({
       success: false,
       message: "Server error",
     });
   }
-};
+};  
 
-// <--- CREDIT SECTION --->
-export const addCredit = async (req, res) => {
-  try {
-    const { title, amount, notes, completed, deadline } = req.body;
-    const userId = req.user._id;
-
-    // Validation
-    if (!title || !amount || !notes || !deadline) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill in all required fields",
-      });
-    }
-
-    // Create and save credit
-    const credit = new Credit({
-      title,
-      amount,
-      notes,
-      completed: completed ?? false, // default to false if not provided
-      deadline,
-      userId,
-    });
-
-    const savedCredit = await credit.save();
-
-    // Link to user
-    await User.findByIdAndUpdate(userId, {
-      $push: { credit: savedCredit._id },
-    });
-
-    // Success response
-    return res.status(201).json({
-      success: true,
-      message: "Credit added successfully",
-      data: savedCredit,
-    });
-  } catch (error) {
-    console.error("Error adding credit:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error, please try again later",
-    });
-  }
-};
-
-export const getUserCredit = async (req, res) => {
-  try {
-    const credits = await Credit.find({
-      userId: req.user.id,
-      completed: false,
-    });
-
-    res.status(200).json({ success: true, data: credits });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-export const markCreditAsCompleted = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const updatedCredit = await Credit.findByIdAndUpdate(
-      id,
-      { completed: true },
-      { new: true }
-    );
-
-    if (!updatedCredit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Credit not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Credit marked as completed",
-      data: updatedCredit,
-    });
-  } catch (error) {
-    console.error("Error marking as completed:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const deleteCredit = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const credit = await Credit.findByIdAndDelete(id);
-
-    if (!credit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Credit not found" });
-    }
-
-    res.json({ success: true, message: "Credit deleted successfully" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
-  }
-};
-
-export const getArchivedCredit = async (req, res) => {
-  try {
-    const completedCredits = await Credit.find({
-      userId: req.user.id,
-      completed: true,
-    });
-
-    res.json(completedCredits);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// <--- DEBIT SECTION --->
-export const addDebit = async (req, res) => {
-  try {
-    const { title, amount, notes, completed, deadline } = req.body;
-    const userId = req.user._id;
-
-    // Validation
-    if (!title || !amount || !notes || !deadline) {
-      return res.status(400).json({
-        success: false,
-        message: "Please fill in all required fields",
-      });
-    }
-
-    // Create and save credit
-    const debit = new Debit({
-      title,
-      amount,
-      notes,
-      completed: completed ?? false, // default to false if not provided
-      deadline,
-      userId,
-    });
-
-    const savedDebit = await debit.save();
-
-    // Link to user
-    await User.findByIdAndUpdate(userId, {
-      $push: { dedit: savedDebit._id },
-    });
-
-    // Success response
-    return res.status(201).json({
-      success: true,
-      message: "Debit added successfully",
-      data: savedDebit,
-    });
-  } catch (error) {
-    console.error("Error adding credit:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error, please try again later",
-    });
-  }
-};
-
-export const getUserDebit = async (req, res) => {
-  try {
-    const debits = await Debit.find({
-      userId: req.user.id,
-      completed: false,
-    });
-
-    res.status(200).json({ success: true, data: debits });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-export const markDebitAsCompleted = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const updatedDebit = await Debit.findByIdAndUpdate(
-      id,
-      { completed: true },
-      { new: true }
-    );
-
-    if (!updatedDebit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Debit not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Debit marked as completed",
-      data: updatedDebit,
-    });
-  } catch (error) {
-    console.error("Error marking as completed:", error);
-    res.status(500).json({ success: false, message: "Server error" });
-  }
-};
-
-export const deleteDebit = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const debit = await Debit.findByIdAndDelete(id);
-
-    if (!debit) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Debit not found" });
-    }
-
-    res.json({ success: true, message: "Debit deleted successfully" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Server error", error: error.message });
-  }
-};
-
-export const getArchivedDebit = async (req, res) => {
-  try {
-    const completedDebits = await Debit.find({
-      userId: req.user.id,
-      completed: true,
-    });
-
-    res.json(completedDebits);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-// Archive
-export const archiveTransaction = async(req,res) => {
-  try {
-    const { userId } = req.params;
-    const archives = await Archive.find({ userId }).sort({ year: -1, month: -1 });
-
-    // Always respond with array (not undefined/null)
-    return res.status(200).json(archives || []);
-  } catch (err) {
-    console.error("Error fetching archives:", err.message);
-    return res.status(500).json({ error: "Failed to fetch archives" });
-  }
-}
-
-export const manualArchive = async (req, res) => {
-   try {
-    const now = new Date();
-    const month = now.getMonth();   // current month
-    const year = now.getFullYear();
-
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 0, 23, 59, 59);
-
-    console.log("📌 Archiving from", startDate, "to", endDate);
-
-    const transactions = await Transaction.find({
-      date: { $gte: startDate, $lte: endDate },
-    });
-
-    console.log("📌 Found transactions:", transactions.length);
-
-    if (transactions.length === 0) {
-      return res.json({ message: "No transactions found to archive." });
-    }
-
-    // Group by user
-    const userTransactions = {};
-    transactions.forEach((t) => {
-      if (!userTransactions[t.userId]) userTransactions[t.userId] = [];
-      userTransactions[t.userId].push(t);
-    });
-
-    console.log("📌 Grouped by user:", Object.keys(userTransactions));
-
-    // Save archive per user
-    for (const userId in userTransactions) {
-      console.log(`📌 Archiving for user ${userId}`);
-      await Archive.create({
-        userId,
-        month: month + 1,
-        year,
-        transactions: userTransactions[userId],
-      });
-    }
-
-    // Delete them from current Transaction collection
-    await Transaction.deleteMany({ date: { $gte: startDate, $lte: endDate } });
-
-    res.json({ message: "✅ Manual archive completed successfully" });
-  } catch (err) {
-    console.error("❌ Archive error:", err);
-    res.status(500).json({ error: "Failed to archive manually", details: err.message });
-  }
-};

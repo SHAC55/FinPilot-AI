@@ -11,7 +11,7 @@ import billsRouter from "./routes/billsRoute.js";
 import splitRouter from "./routes/splitRoute.js";
 import "./utils/reminderScheduler.js";
 import financeAnalysisRouter from "./routes/aianalysisRoute.js";
-import "./utils/monthlyArchiveJob.js";
+import walletRouter from "./routes/wallet.route.js";
 
 
 dotenv.config();
@@ -32,6 +32,7 @@ app.use("/api/goal", goalRouter);
 app.use("/api/bill", billsRouter);
 app.use("/api/split", splitRouter);
 app.use("/api/finance", financeAnalysisRouter);
+app.use("/api/wallet", walletRouter);
 
 // API Endpoint
 app.get("/", (req, res) => {

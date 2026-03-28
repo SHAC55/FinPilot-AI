@@ -26,7 +26,7 @@ const Profile = () => {
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-gray-100">
         {/* Profile Image */}
         <div className="flex flex-col items-center">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+          <div className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
             {user.username.charAt(0).toUpperCase()}
           </div>
           <h1 className="mt-4 text-2xl font-bold text-gray-800">
@@ -57,7 +57,7 @@ const Profile = () => {
         <div className="mt-8">
           <button 
             onClick={logout}
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
+          className="w-full bg-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
             Logout
           </button>
         </div>

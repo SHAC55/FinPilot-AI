@@ -7,7 +7,8 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
 
-  const  URL  =  'https://finpilot-server.onrender.com/api'
+  // const  URL  =  'https://finpilot-server.onrender.com/api'
+  const  URL = `http://localhost:5000/api`;
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
