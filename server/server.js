@@ -25,10 +25,11 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "https://finpilotai.vercel.app"], // your frontend URL
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 
+app.options("*", cors()); 
 // All Router
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
