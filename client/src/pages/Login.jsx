@@ -65,7 +65,7 @@ const Login = () => {
   const handleVerifyOtp = async (otpData) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(`${URL}/auth/verify-otp`, {
+      const res = await API.post(`/auth/verify-otp`, {
         email: userEmail,
         otp: otpData.otp,
       });
