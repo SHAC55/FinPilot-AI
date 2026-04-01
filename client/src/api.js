@@ -5,7 +5,7 @@ import axios from "axios";
 // 🔧 Base Config
 const API = axios.create({
   // baseURL: "http://localhost:5000/api",
-  baseURL: "https://finpilotai.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
 //  Attach Token Automatically
