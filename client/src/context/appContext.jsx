@@ -8,8 +8,8 @@ import API from "../api.js";
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-  // const  URL  =  'https://finpilot-server.onrender.com/api'
-  const URL = `http://localhost:5000/api`;
+  const  URL  =  'https://finpilot-server.onrender.com/api'
+  // const URL = `http://localhost:5000/api`;
 
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
