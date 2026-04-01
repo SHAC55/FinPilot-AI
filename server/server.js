@@ -39,7 +39,6 @@ app.use(
   })
 );
 
-app.options("/*", cors()); 
 // All Router
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
