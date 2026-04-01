@@ -330,11 +330,11 @@ const Login = () => {
             )}
 
             {/* Demo Credentials */}
-            <div className="mt-6 p-4 bg-blue-50 rounded-xl">
+            {/* <div className="mt-6 p-4 bg-blue-50 rounded-xl">
               <p className="text-xs text-blue-800 text-center">
                 🔐 Demo Credentials: demo@finpilot.com / demo123
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
