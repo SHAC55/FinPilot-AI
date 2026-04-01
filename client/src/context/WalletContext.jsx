@@ -15,7 +15,7 @@ export const WalletProvider = ({ children }) => {
   const getWallets = async () => {
     try {
       setLoading(true);
-      const { data } = await API.get("/wallet/");
+      const { data } = await API.get("/wallet");
       setWallets(data.wallets);
     } catch (error) {
       console.error(error.response?.data?.message);
@@ -26,7 +26,10 @@ export const WalletProvider = ({ children }) => {
 
   // autoload wallets on mount
   useEffect(() => {
-    getWallets();
+    const token = localStorage.getItem("token");
+    if (token) {
+      getWallets();
+    }
   }, []);
 
   //  Create wallet

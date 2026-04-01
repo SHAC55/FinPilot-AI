@@ -16,12 +16,14 @@ walletRouter.post("/create", authMiddleware, createWallet);
 
 walletRouter.get("/", authMiddleware, getWallets);
 
+walletRouter.get("/transactions/:id", authMiddleware, getTransactionsByWallet);
+
 walletRouter.get("/:id", authMiddleware, getWalletById);
 
 walletRouter.put("/:id", authMiddleware, updateWallet);
 
 walletRouter.delete("/:id", authMiddleware, deleteWallet);
 
-walletRouter.get("/transactions/:id", authMiddleware, getTransactionsByWallet);
+
 
 export default walletRouter;

@@ -2,7 +2,6 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 
-
 import connectMongoDB from "./config/mongoDB.js";
 import authRouter from "./routes/auth.route.js";
 import transactionRouter from "./routes/transaction.route.js";
@@ -12,8 +11,6 @@ import walletRouter from "./routes/wallet.route.js";
 import ledgerRouter from "./routes/ledger.route.js";
 import aiRouter from "./routes/ai.routes.js";
 import splitBillRouter from "./routes/splitBill.routes.js";
-
-
 
 dotenv.config();
 
@@ -32,7 +29,7 @@ app.use("/api/transaction", transactionRouter);
 app.use("/api/goal", goalRouter);
 app.use("/api/wallet", walletRouter);
 app.use("/api/ledger", ledgerRouter);
-app.use("/api/ai",aiRouter)
+app.use("/api/ai", aiRouter);
 app.use("/api/split-bills", splitBillRouter);
 
 // API Endpoint
@@ -41,6 +38,4 @@ app.get("/", (req, res) => {
 });
 
 // port listening
-app.listen(PORT, () =>
-  console.log(`✅ Backend is working on port ${PORT}`)
-);
+app.listen(PORT, () => console.log(`✅ Backend is working on port ${PORT}`));
