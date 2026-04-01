@@ -8,7 +8,7 @@ import API from "../api.js";
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-  const URL = "https://finpilot-server.onrender.com/api";
+  const  URL  =  'https://finpilot-server.onrender.com/api'
   // const URL = `http://localhost:5000/api`;
 
   const [loading, setLoading] = useState(false);
@@ -17,22 +17,10 @@ const AppProvider = ({ children }) => {
 
   const [expenses, setExpenses] = useState([]);
 
-   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setToken(storedToken);
-      fetchExpenses();
-    }
-  }, []);
-
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const res = await API.get(`/transaction/get-expenses`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await API.get(`/transaction/get-expenses`);
       setExpenses(res.data.data || []);
     } catch (err) {
       console.log("Error fetching expenses", err);
@@ -41,7 +29,12 @@ const AppProvider = ({ children }) => {
     }
   };
 
- 
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      fetchExpenses();
+    }
+  }, []);
+
   const [goals, setGoals] = useState([]);
 
   const navigate = useNavigate();
