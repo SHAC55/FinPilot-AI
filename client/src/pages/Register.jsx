@@ -18,6 +18,7 @@ import {
   Key,
   CheckCircle
 } from "lucide-react";
+import API from "../api.js";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -42,7 +43,7 @@ const Register = () => {
   const handleRegister = async (data) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(`${URL}/auth/register`, {
+      const res = await API.post(`/auth/register`, {
         username: data.username,
         email: data.email,
         password: data.password,
@@ -66,7 +67,7 @@ const Register = () => {
   const handleVerifyOtp = async (data) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(`${URL}/auth/verify-otp`, {
+      const res = await API.post(`/auth/verify-otp`, {
         email: userEmail,
         otp: data.otp,
       });

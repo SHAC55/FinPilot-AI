@@ -15,6 +15,7 @@ import {
   EyeOff,
   Key
 } from "lucide-react";
+import API from "../api";
 
 const Login = () => {
   const { setToken, setUser, URL } = useContext(AppContext);
@@ -34,7 +35,7 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(`${URL}/auth/login`, {
+      const res = await API.post(`/auth/login`, {
         email: data.email,
         password: data.password,
       });
