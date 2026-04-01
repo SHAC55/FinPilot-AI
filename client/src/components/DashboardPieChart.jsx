@@ -169,7 +169,7 @@ const DashboardPieChart = () => {
       .sort((a, b) => b.value - a.value);
   }, [filteredExpenses]);
 
-   = data.reduce((sum, d) => sum + d.value, 0);
+   const total= data.reduce((sum, d) => sum + d.value, 0);
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
