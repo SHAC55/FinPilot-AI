@@ -30,8 +30,7 @@ app.use(
   }),
 );
 
-
-app.options("(.*)", cors()); // 👈 Express v5 syntax
+app.options("/:path(*)", cors());
 app.use(express.json());
 
 // All Router
