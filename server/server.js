@@ -21,15 +21,25 @@ connectMongoDB();
 
 // middleware
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://finpilotai.vercel.app",
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://finpilotai.vercel.app"], // your frontend URL
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
-app.use(express.json());
 
-app.options("*", cors()); 
+app.options("/*", cors()); 
 // All Router
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
