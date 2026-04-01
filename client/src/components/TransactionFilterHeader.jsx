@@ -21,6 +21,8 @@ const TransactionFilterHeader = ({
   setMonthFilter,
   yearFilter,
   setYearFilter,
+  onAnalyze, // ← add this prop
+  transactionCount,
 }) => {
   const currentYear = new Date().getFullYear();
   const hasActiveFilters =
@@ -35,7 +37,7 @@ const TransactionFilterHeader = ({
     yearFilter && "year",
   ].filter(Boolean).length;
 
-  const  navigate =  useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="bg-blue-600 border-b border-gray-200 sticky top-0 z-10">
@@ -77,10 +79,34 @@ const TransactionFilterHeader = ({
           {/* Right Section - Actions & Filters */}
           <div className="flex flex-col items-stretch lg:items-end gap-4">
             {/* Add Transaction Button */}
-            
-            <button onClick={() => navigate("/addtransaction")} className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-blue-100 text-blue-600 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium">
+
+            <button
+              onClick={() => navigate("/addtransaction")}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-blue-100 text-blue-600 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
+            >
               <Plus className="w-4 h-4" />
               Add Transaction
+            </button>
+
+            <button
+              onClick={onAnalyze}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-800 hover:bg-blue-900 text-white rounded-xl transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium border border-blue-500"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              AI Insights
+              {transactionCount > 0 && (
+                <span className="inline-flex items-center justify-center w-5 h-5 bg-blue-500 text-white text-xs rounded-full font-bold">
+                  {transactionCount > 99 ? "99+" : transactionCount}
+                </span>
+              )}
             </button>
 
             {/* Filter Section */}
@@ -130,8 +156,18 @@ const TransactionFilterHeader = ({
                   </select>
                   <AiOutlineTag className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
                   <div className="absolute right-2.5 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -202,7 +238,9 @@ const TransactionFilterHeader = ({
                   {typeFilter !== "all" && (
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg text-xs text-gray-700">
                       <AiOutlineTag className="text-xs" />
-                      <span>{typeFilter === "income" ? "Income" : "Expense"}</span>
+                      <span>
+                        {typeFilter === "income" ? "Income" : "Expense"}
+                      </span>
                       <button
                         onClick={() => setTypeFilter("all")}
                         className="ml-0.5 text-gray-400 hover:text-gray-600"
@@ -235,10 +273,13 @@ const TransactionFilterHeader = ({
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 rounded-lg text-xs text-gray-700">
                       <MdOutlineDateRange className="text-xs" />
                       <span>
-                        {new Date(monthFilter + "-01").toLocaleDateString("en-US", {
-                          month: "long",
-                          year: "numeric",
-                        })}
+                        {new Date(monthFilter + "-01").toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "long",
+                            year: "numeric",
+                          },
+                        )}
                       </span>
                       <button
                         onClick={() => setMonthFilter("")}

@@ -1,5 +1,5 @@
-import Transaction from "../models/transactionModel.js";
-import Wallet from "../models/walletModel.js";
+import Transaction from "../models/transaction.model.js";
+import Wallet from "../models/wallet.model.js";
 
 //  Create Wallet
 export const createWallet = async (req, res) => {

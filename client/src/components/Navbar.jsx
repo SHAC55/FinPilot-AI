@@ -13,15 +13,15 @@ const Navbar = () => {
   return (
     <div className="bg-blue-600 text-white px-6 py-4  sticky top-0 z-50">
       {/* Top Row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between ">
         {/* Logo */}
         <h1 className="text-2xl md:text-3xl font-bold tracking-wide">
           FinPilot AI
         </h1>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8 font-medium">
-          <NavLink to="/" className={navLinkStyle}>
+        <nav className="hidden md:flex items-center gap-8 font-medium ">
+          <NavLink to="/dashboard" className={navLinkStyle}>
             Dashboard
           </NavLink>
           <NavLink to="/transaction" className={navLinkStyle}>
@@ -68,7 +68,7 @@ const Navbar = () => {
       >
         <div className="flex flex-col gap-4 font-medium bg-blue-600 p-4 rounded-xl shadow-lg">
           <NavLink
-            to="/"
+            to="/dashboard"
             onClick={() => setIsOpen(false)}
             className={navLinkStyle}
           >

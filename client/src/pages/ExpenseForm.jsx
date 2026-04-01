@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom"; // Add this import
 import toast from "react-hot-toast";
 import API from "../api.js";
 import { useWallet } from "../context/WalletContext";
@@ -41,28 +42,145 @@ import {
 
 /* ================= CATEGORY CONFIG ================= */
 const categories = [
-  { value: "Utilities", label: "Utilities", icon: Home, color: "blue", bgLight: "bg-blue-50", textColor: "text-blue-600", borderColor: "border-blue-200" },
-  { value: "Groceries", label: "Groceries", icon: ShoppingBag, color: "green", bgLight: "bg-green-50", textColor: "text-green-600", borderColor: "border-green-200" },
-  { value: "Income", label: "Income", icon: Briefcase, color: "emerald", bgLight: "bg-emerald-50", textColor: "text-emerald-600", borderColor: "border-emerald-200" },
-  { value: "Education", label: "Education", icon: GraduationCap, color: "purple", bgLight: "bg-purple-50", textColor: "text-purple-600", borderColor: "border-purple-200" },
-  { value: "Travel", label: "Travel", icon: Car, color: "yellow", bgLight: "bg-amber-50", textColor: "text-amber-600", borderColor: "border-amber-200" },
-  { value: "Rent", label: "Rent", icon: Building2, color: "orange", bgLight: "bg-orange-50", textColor: "text-orange-600", borderColor: "border-orange-200" },
-  { value: "Entertainment", label: "Entertainment", icon: Film, color: "pink", bgLight: "bg-pink-50", textColor: "text-pink-600", borderColor: "border-pink-200" },
-  { value: "Shopping", label: "Shopping", icon: Shirt, color: "rose", bgLight: "bg-rose-50", textColor: "text-rose-600", borderColor: "border-rose-200" },
-  { value: "Medical", label: "Medical", icon: Heart, color: "red", bgLight: "bg-red-50", textColor: "text-red-600", borderColor: "border-red-200" },
-  { value: "Sports", label: "Sports", icon: Dumbbell, color: "indigo", bgLight: "bg-indigo-50", textColor: "text-indigo-600", borderColor: "border-indigo-200" },
-  { value: "Other", label: "Other", icon: MoreHorizontal, color: "gray", bgLight: "bg-gray-50", textColor: "text-gray-600", borderColor: "border-gray-200" },
+  {
+    value: "Utilities",
+    label: "Utilities",
+    icon: Home,
+    color: "blue",
+    bgLight: "bg-blue-50",
+    textColor: "text-blue-600",
+    borderColor: "border-blue-200",
+  },
+  {
+    value: "Groceries",
+    label: "Groceries",
+    icon: ShoppingBag,
+    color: "green",
+    bgLight: "bg-green-50",
+    textColor: "text-green-600",
+    borderColor: "border-green-200",
+  },
+  {
+    value: "Income",
+    label: "Income",
+    icon: Briefcase,
+    color: "emerald",
+    bgLight: "bg-emerald-50",
+    textColor: "text-emerald-600",
+    borderColor: "border-emerald-200",
+  },
+  {
+    value: "Education",
+    label: "Education",
+    icon: GraduationCap,
+    color: "purple",
+    bgLight: "bg-purple-50",
+    textColor: "text-purple-600",
+    borderColor: "border-purple-200",
+  },
+  {
+    value: "Travel",
+    label: "Travel",
+    icon: Car,
+    color: "yellow",
+    bgLight: "bg-amber-50",
+    textColor: "text-amber-600",
+    borderColor: "border-amber-200",
+  },
+  {
+    value: "Rent",
+    label: "Rent",
+    icon: Building2,
+    color: "orange",
+    bgLight: "bg-orange-50",
+    textColor: "text-orange-600",
+    borderColor: "border-orange-200",
+  },
+  {
+    value: "Entertainment",
+    label: "Entertainment",
+    icon: Film,
+    color: "pink",
+    bgLight: "bg-pink-50",
+    textColor: "text-pink-600",
+    borderColor: "border-pink-200",
+  },
+  {
+    value: "Shopping",
+    label: "Shopping",
+    icon: Shirt,
+    color: "rose",
+    bgLight: "bg-rose-50",
+    textColor: "text-rose-600",
+    borderColor: "border-rose-200",
+  },
+  {
+    value: "Medical",
+    label: "Medical",
+    icon: Heart,
+    color: "red",
+    bgLight: "bg-red-50",
+    textColor: "text-red-600",
+    borderColor: "border-red-200",
+  },
+  {
+    value: "Sports",
+    label: "Sports",
+    icon: Dumbbell,
+    color: "indigo",
+    bgLight: "bg-indigo-50",
+    textColor: "text-indigo-600",
+    borderColor: "border-indigo-200",
+  },
+  {
+    value: "Other",
+    label: "Other",
+    icon: MoreHorizontal,
+    color: "gray",
+    bgLight: "bg-gray-50",
+    textColor: "text-gray-600",
+    borderColor: "border-gray-200",
+  },
 ];
 
 /* ================= PAYMENT METHODS ================= */
 const methods = [
-  { value: "Cash", label: "Cash", icon: Banknote, color: "green", bgLight: "bg-green-50", textColor: "text-green-600" },
-  { value: "Card", label: "Card", icon: CreditCard, color: "blue", bgLight: "bg-blue-50", textColor: "text-blue-600" },
-  { value: "UPI", label: "UPI", icon: Smartphone, color: "purple", bgLight: "bg-purple-50", textColor: "text-purple-600" },
-  { value: "Wallet", label: "Wallet", icon: Landmark, color: "orange", bgLight: "bg-orange-50", textColor: "text-orange-600" },
+  {
+    value: "Cash",
+    label: "Cash",
+    icon: Banknote,
+    color: "green",
+    bgLight: "bg-green-50",
+    textColor: "text-green-600",
+  },
+  {
+    value: "Card",
+    label: "Card",
+    icon: CreditCard,
+    color: "blue",
+    bgLight: "bg-blue-50",
+    textColor: "text-blue-600",
+  },
+  {
+    value: "UPI",
+    label: "UPI",
+    icon: Smartphone,
+    color: "purple",
+    bgLight: "bg-purple-50",
+    textColor: "text-purple-600",
+  },
+  {
+    value: "Wallet",
+    label: "Wallet",
+    icon: Landmark,
+    color: "orange",
+    bgLight: "bg-orange-50",
+    textColor: "text-orange-600",
+  },
 ];
 
 const ExpenseForm = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("");
@@ -112,23 +230,34 @@ const ExpenseForm = () => {
         },
       });
 
+      // Reset form to initial state
       reset({
         type: "expense",
         date: new Date().toISOString().split("T")[0],
       });
 
+      // Reset custom state variables
       setSelectedCategory("");
       setSelectedMethod("");
-      getWallets();
+      
+      // Refresh wallets to update balance
+      await getWallets();
+
+      // Redirect to transactions page after successful submission
+      navigate("/transaction");
+      
     } catch (error) {
       console.error(error);
-      toast.error(error.response?.data?.message || "Failed to add transaction", {
-        style: {
-          borderRadius: "12px",
-          background: "#ef4444",
-          color: "#fff",
+      toast.error(
+        error.response?.data?.message || "Failed to add transaction",
+        {
+          style: {
+            borderRadius: "12px",
+            background: "#ef4444",
+            color: "#fff",
+          },
         },
-      });
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -144,7 +273,7 @@ const ExpenseForm = () => {
   };
 
   const getCategoryStyles = (catValue) => {
-    const category = categories.find(c => c.value === catValue);
+    const category = categories.find((c) => c.value === catValue);
     if (selectedCategory === catValue) {
       return `${category?.bgLight} ${category?.borderColor} border-2 shadow-sm ring-2 ring-offset-1 ring-${category?.color}-200`;
     }
@@ -152,7 +281,7 @@ const ExpenseForm = () => {
   };
 
   const getMethodStyles = (methodValue) => {
-    const method = methods.find(m => m.value === methodValue);
+    const method = methods.find((m) => m.value === methodValue);
     if (selectedMethod === methodValue) {
       return `${method?.bgLight} border-2 border-${method?.color}-300 shadow-sm`;
     }
@@ -178,7 +307,7 @@ const ExpenseForm = () => {
           </div>
 
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate("/transaction")}
             className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
@@ -192,7 +321,10 @@ const ExpenseForm = () => {
           className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-100 p-5 sm:p-8 space-y-6 transition-all duration-300"
         >
           {/* Hidden Category Field */}
-          <input type="hidden" {...register("category", { required: "Category is required" })} />
+          <input
+            type="hidden"
+            {...register("category", { required: "Category is required" })}
+          />
 
           {/* Transaction Type Toggle - Modern Segmented Control */}
           <div className="space-y-2">
@@ -208,12 +340,14 @@ const ExpenseForm = () => {
                   setSelectedCategory("");
                 }}
                 className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${getTypeStyles(
-                  "expense"
+                  "expense",
                 )}`}
               >
                 <TrendingDown className="w-4 h-4" />
                 Expense
-                {selectedType === "expense" && <Check className="w-4 h-4 ml-1" />}
+                {selectedType === "expense" && (
+                  <Check className="w-4 h-4 ml-1" />
+                )}
               </button>
 
               <button
@@ -223,12 +357,14 @@ const ExpenseForm = () => {
                   setSelectedCategory("");
                 }}
                 className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${getTypeStyles(
-                  "income"
+                  "income",
                 )}`}
               >
                 <TrendingUp className="w-4 h-4" />
                 Income
-                {selectedType === "income" && <Check className="w-4 h-4 ml-1" />}
+                {selectedType === "income" && (
+                  <Check className="w-4 h-4 ml-1" />
+                )}
               </button>
             </div>
           </div>
@@ -258,7 +394,8 @@ const ExpenseForm = () => {
                 </div>
                 {errors.wallet && (
                   <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                    <Circle className="w-2 h-2 fill-red-500" /> {errors.wallet.message}
+                    <Circle className="w-2 h-2 fill-red-500" />{" "}
+                    {errors.wallet.message}
                   </p>
                 )}
               </div>
@@ -277,7 +414,9 @@ const ExpenseForm = () => {
                   onBlur={() => setFocusedField(null)}
                 />
                 {errors.title && (
-                  <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.title.message}
+                  </p>
                 )}
               </div>
 
@@ -289,9 +428,9 @@ const ExpenseForm = () => {
                 </label>
                 <input
                   type="number"
-                  {...register("amount", { 
+                  {...register("amount", {
                     required: "Amount is required",
-                    min: { value: 1, message: "Amount must be greater than 0" }
+                    min: { value: 1, message: "Amount must be greater than 0" },
                   })}
                   placeholder="0.00"
                   className={`w-full px-4 py-3 rounded-xl border ${focusedField === "amount" ? "border-blue-400 ring-2 ring-blue-100" : "border-gray-200"} bg-white transition-all duration-200 focus:outline-none`}
@@ -299,7 +438,9 @@ const ExpenseForm = () => {
                   onBlur={() => setFocusedField(null)}
                 />
                 {errors.amount && (
-                  <p className="text-red-500 text-xs mt-1">{errors.amount.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.amount.message}
+                  </p>
                 )}
               </div>
 
@@ -315,7 +456,9 @@ const ExpenseForm = () => {
                   className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all duration-200"
                 />
                 {errors.date && (
-                  <p className="text-red-500 text-xs mt-1">{errors.date.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.date.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -341,20 +484,28 @@ const ExpenseForm = () => {
                           setValue("category", cat.value);
                         }}
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200 ${getCategoryStyles(
-                          cat.value
+                          cat.value,
                         )} ${isSelected ? cat.bgLight : "hover:bg-gray-50"}`}
                       >
-                        <Icon className={`w-4 h-4 ${isSelected ? cat.textColor : "text-gray-500"}`} />
-                        <span className={`text-sm font-medium ${isSelected ? cat.textColor : "text-gray-700"}`}>
+                        <Icon
+                          className={`w-4 h-4 ${isSelected ? cat.textColor : "text-gray-500"}`}
+                        />
+                        <span
+                          className={`text-sm font-medium ${isSelected ? cat.textColor : "text-gray-700"}`}
+                        >
                           {cat.label}
                         </span>
-                        {isSelected && <Check className="ml-auto w-3.5 h-3.5 text-green-500" />}
+                        {isSelected && (
+                          <Check className="ml-auto w-3.5 h-3.5 text-green-500" />
+                        )}
                       </button>
                     );
                   })}
                 </div>
                 {errors.category && (
-                  <p className="text-red-500 text-xs mt-1">{errors.category.message}</p>
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.category.message}
+                  </p>
                 )}
               </div>
 
@@ -377,11 +528,15 @@ const ExpenseForm = () => {
                           setValue("method", m.value);
                         }}
                         className={`flex flex-col sm:flex-row items-center justify-center gap-2 px-3 py-2.5 rounded-xl transition-all duration-200 ${getMethodStyles(
-                          m.value
+                          m.value,
                         )} ${isSelected ? m.bgLight : "hover:bg-gray-50"}`}
                       >
-                        <Icon className={`w-4 h-4 ${isSelected ? m.textColor : "text-gray-500"}`} />
-                        <span className={`text-xs sm:text-sm font-medium ${isSelected ? m.textColor : "text-gray-700"}`}>
+                        <Icon
+                          className={`w-4 h-4 ${isSelected ? m.textColor : "text-gray-500"}`}
+                        />
+                        <span
+                          className={`text-xs sm:text-sm font-medium ${isSelected ? m.textColor : "text-gray-700"}`}
+                        >
                           {m.label}
                         </span>
                       </button>
@@ -413,7 +568,7 @@ const ExpenseForm = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-[1.01]"
+            className="w-full bg-gradient-to-r from-blue-800 to-blue-900 hover:from-blue-700 hover:to-blue-800 text-white py-3.5 rounded-xl flex items-center justify-center gap-2 font-semibold transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70 disabled:cursor-not-allowed transform hover:scale-[1.01]"
           >
             {isSubmitting ? (
               <>

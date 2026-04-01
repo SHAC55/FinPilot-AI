@@ -2,30 +2,28 @@ import React, { useContext, useMemo, useState } from "react";
 import { PiggyBank, TrendingUp, TrendingDown } from "lucide-react";
 import { AppContext } from "../context/appContext";
 import { useWallet } from "../context/WalletContext";
+import { useNavigate } from "react-router-dom";
 
 const DashboardStats = () => {
   const { expenses } = useContext(AppContext);
   const { wallets } = useWallet();
+
+  const navigate = useNavigate();
 
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
 
   //  Month & Year State
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().getMonth()
-  );
-  const [selectedYear, setSelectedYear] = useState(
-    new Date().getFullYear()
-  );
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   //  Filter Expenses by Month & Year
   const filteredExpenses = useMemo(() => {
     return expenses.filter((e) => {
       const date = new Date(e.date);
       return (
-        date.getMonth() === selectedMonth &&
-        date.getFullYear() === selectedYear
+        date.getMonth() === selectedMonth && date.getFullYear() === selectedYear
       );
     });
   }, [expenses, selectedMonth, selectedYear]);
@@ -40,10 +38,7 @@ const DashboardStats = () => {
       else if (e.type === "expense") expense += e.amount;
     });
 
-    const totalBalance = wallets.reduce(
-      (acc, w) => acc + (w.balance || 0),
-      0
-    );
+    const totalBalance = wallets.reduce((acc, w) => acc + (w.balance || 0), 0);
 
     return {
       totalIncome: income,
@@ -100,8 +95,18 @@ const DashboardStats = () => {
           className="p-2 rounded-md text-black"
         >
           {[
-            "Jan","Feb","Mar","Apr","May","Jun",
-            "Jul","Aug","Sep","Oct","Nov","Dec"
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
           ].map((m, i) => (
             <option key={i} value={i}>
               {m}
@@ -140,7 +145,7 @@ const DashboardStats = () => {
                 <p className="text-sm text-gray-500">
                   {new Date(selectedYear, selectedMonth).toLocaleString(
                     "default",
-                    { month: "long", year: "numeric" }
+                    { month: "long", year: "numeric" },
                   )}
                 </p>
               </div>

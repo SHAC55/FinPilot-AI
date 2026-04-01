@@ -1,9 +1,0 @@
-1. ADD CHART
-2. FIXED AI
-3. MANAGE  ALL  PREVIOS  FEATURE  LIKE DEBIT,CREDIT ,SPLIT  BILL
-4. addcontext fro all 
-
-5. readme & docs
-
-++ Additional  
- FEATURE : PLAN  A TRIP

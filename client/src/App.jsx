@@ -6,32 +6,27 @@ import { Toaster } from "react-hot-toast";
 import Navbar from "./components/Navbar";
 
 import Dashboard from "./pages/Dashboard";
-import Split from "./pages/Split";
 import PlanGoal from "./pages/PlanGoal";
 import ExpenseForm from "./pages/ExpenseForm";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Credit from "./pages/Credit";
-import Debit from "./pages/Debit";
-import CreditForm from "./pages/CreditForm";
-import DebitForm from "./pages/DebitForm";
-import CreditArchive from "./pages/CreditArchive";
-import DebitArchive from "./pages/DebitArchive";
 import AddGoalForm from "./pages/AddGoalForm";
 import GoalAnalysisPage from "./pages/GoalAnalysis";
 import Profile from "./pages/Profile";
-import BillRemiander from "./pages/BillRemiander";
-import AddBillForm from "./pages/AddBillForm";
-import CompletedBill from "./components/CompletedBill";
-import CompletedBillsArchive from "./pages/CompletedBillsArchive";
-import AddSplitForm from "./pages/AddSplitForm";
-import ArchivedSplits from "./pages/ArchivedSplits";
 import PrivateRoute from "./components/PrivateRoute";
 import Transaction from "./pages/Transaction";
 import Wallet from "./pages/Wallet";
 import AddWalletForm from "./pages/AddWalletForm";
-import WalletDetail from "./pages/WalletDetail";
 import WalletDetails from "./pages/WalletDetail";
+import Ledger from "./pages/Ledger";
+import AddLedger from "./pages/AddLedger";
+import AiInsightExpense from "./pages/AiInsightExpense";
+import LandingPage from "./pages/LandingPage";
+import CreateSplitBill from "./pages/CreateSplitBill";
+import SplitBills from "./pages/SplitBills";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResestPassword from "./pages/ResestPassword";
+
 
 const App = () => {
   const location = useLocation();
@@ -54,10 +49,18 @@ const App = () => {
     "/expense-form",
     "/profile",
     "/addwallet",
-    "/addtransaction"
+    "/addtransaction",
+    "/ledger/add",
+    "/goal-analysis/:id",
+    "/",
+    "/split-bills/create",
+    "/forgot-password",
+    "/reset-password"
   ];
 
-  const shouldHideNavbar = hideNavbarPaths.includes(location.pathname);
+  const shouldHideNavbar =
+  hideNavbarPaths.includes(location.pathname) ||
+  location.pathname.startsWith("/reset-password/");
 
   return (
     <div className="min-w-[320px]">
@@ -68,12 +71,15 @@ const App = () => {
 
       <Routes>
         {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResestPassword />} />
 
         {/* Protected Routes */}
         <Route
-          path="/"
+          path="/dashboard"
           element={
             <PrivateRoute>
               <Dashboard />
@@ -85,14 +91,6 @@ const App = () => {
           element={
             <PrivateRoute>
               <Transaction />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/split"
-          element={
-            <PrivateRoute>
-              <Split />
             </PrivateRoute>
           }
         />
@@ -120,7 +118,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
-         <Route
+        <Route
           path="/wallet/:id"
           element={
             <PrivateRoute>
@@ -128,7 +126,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        
+
         <Route
           path="/profile"
           element={
@@ -145,54 +143,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/credit"
-          element={
-            <PrivateRoute>
-              <Credit />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/debit"
-          element={
-            <PrivateRoute>
-              <Debit />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/credit-form"
-          element={
-            <PrivateRoute>
-              <CreditForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/debit-form"
-          element={
-            <PrivateRoute>
-              <DebitForm />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/credit-archive"
-          element={
-            <PrivateRoute>
-              <CreditArchive />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/debit-archive"
-          element={
-            <PrivateRoute>
-              <DebitArchive />
-            </PrivateRoute>
-          }
-        />
+
         <Route
           path="/addgoal"
           element={
@@ -210,42 +161,46 @@ const App = () => {
           }
         />
         <Route
-          path="/bills"
+          path="/ledger"
           element={
             <PrivateRoute>
-              <BillRemiander />
+              <Ledger />
             </PrivateRoute>
           }
         />
         <Route
-          path="/add-bill"
+          path="/ledger/add"
           element={
             <PrivateRoute>
-              <AddBillForm />
+              <AddLedger />
             </PrivateRoute>
           }
         />
         <Route
-          path="/completedbills"
+          path="/ai-insight-expense"
           element={
             <PrivateRoute>
-              <CompletedBillsArchive />
+              <AiInsightExpense />
             </PrivateRoute>
           }
         />
+
         <Route
-          path="/addsplit"
+          path="/split-bills"
           element={
             <PrivateRoute>
-              <AddSplitForm />
+              <SplitBills />
             </PrivateRoute>
           }
         />
+
+       
+        
         <Route
-          path="/completedsplits"
+          path="/split-bills/create"
           element={
             <PrivateRoute>
-              <ArchivedSplits />
+              <CreateSplitBill />
             </PrivateRoute>
           }
         />

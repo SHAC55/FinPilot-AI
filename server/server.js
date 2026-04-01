@@ -4,14 +4,15 @@ import cors from "cors";
 
 
 import connectMongoDB from "./config/mongoDB.js";
-import authRouter from "./routes/authRoute.js";
-import transactionRouter from "./routes/transactionRoute.js";
-import goalRouter from "./routes/goalsRoute.js";
-import billsRouter from "./routes/billsRoute.js";
-import splitRouter from "./routes/splitRoute.js";
-import "./utils/reminderScheduler.js";
-import financeAnalysisRouter from "./routes/aianalysisRoute.js";
+import authRouter from "./routes/auth.route.js";
+import transactionRouter from "./routes/transaction.route.js";
+import goalRouter from "./routes/goals.route.js";
+
 import walletRouter from "./routes/wallet.route.js";
+import ledgerRouter from "./routes/ledger.route.js";
+import aiRouter from "./routes/ai.routes.js";
+import splitBillRouter from "./routes/splitBill.routes.js";
+
 
 
 dotenv.config();
@@ -29,14 +30,14 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api/goal", goalRouter);
-app.use("/api/bill", billsRouter);
-app.use("/api/split", splitRouter);
-app.use("/api/finance", financeAnalysisRouter);
 app.use("/api/wallet", walletRouter);
+app.use("/api/ledger", ledgerRouter);
+app.use("/api/ai",aiRouter)
+app.use("/api/split-bills", splitBillRouter);
 
 // API Endpoint
 app.get("/", (req, res) => {
-  res.send("FUNFUSION");
+  res.send("Finpilot API is running...");
 });
 
 // port listening

@@ -2,55 +2,57 @@ import axios from "axios";
 import { createContext, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import API from "../api.js";
 
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-
   // const  URL  =  'https://finpilot-server.onrender.com/api'
-  const  URL = `http://localhost:5000/api`;
+  const URL = `http://localhost:5000/api`;
+
+  const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
 
-  const [credit, setCredit] = useState([]);
-  const [archiveCredit, setArchiveCredit] = useState([]);
+  const fetchExpenses = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get(`/transaction/get-expenses`);
+      setExpenses(res.data.data || []);
+    } catch (err) {
+      console.log("Error fetching expenses", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const [debit, setDebit] = useState([]);
-  const [archiveDebit, setArchiveDebit] = useState([]);
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      fetchExpenses();
+    }
+  }, []);
 
   const [goals, setGoals] = useState([]);
 
-  const [bills, setBills] = useState([]);
-  const [completedBills, setCompletedBills] = useState([]);
-
-  const [splits,setSplits] = useState([]);
-  const [completedSplits,setCompletedSplits] = useState([]);
-
-  const creditCount  = credit.length ;
-  const debitCount  =  debit.length ;  
-
-  const  navigate =  useNavigate()
+  const navigate = useNavigate();
   const logout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  setToken("");
-  setUser(null); 
-  navigate('/login')
-};
-
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken("");
+    setUser(null);
+    navigate("/login");
+  };
 
   const deleteItem = async (endpoint, id, setState) => {
     try {
-      const res = await axios.delete(
-        `${URL}/${endpoint}/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const res = await axios.delete(`${URL}/${endpoint}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
       if (res.data.success) {
         setState((prev) => prev.filter((item) => item._id !== id));
@@ -64,158 +66,36 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  // CREDIT
-  const markCreditAsCompleted = async (id) => {
-    try {
-      const res = await axios.patch(
-        `${URL}/transaction/credit/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data.success) {
-        setCredit((prev) => prev.filter((item) => item._id !== id));
-        setArchiveCredit((prev) => [...prev, res.data.data]);
-      }
-    } catch (error) {
-      console.error("Error marking credit as completed", error);
-    }
-  };
-
-  const getCompletedCredit = async () => {
-    try {
-      const res = await axios.get(
-        `${URL}/transaction/getcompletedcredit`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data) {
-        setArchiveCredit(res.data);
-        // console.log("Completed credits:", res.data);
-      }
-    } catch (error) {
-      console.error("Error fetching completed credits:", error);
-    }
-  };
-
-  // DEBIT
-  const markDedbitAsCompleted = async (id) => {
-    try {
-      const res = await axios.patch(
-        `${URL}/transaction/debit/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data.success) {
-        setDebit((prev) => prev.filter((item) => item._id !== id));
-        setArchiveCredit((prev) => [...prev, res.data.data]);
-      }
-    } catch (error) {
-      console.error("Error marking credit as completed", error);
-    }
-  };
-
-  const getCompletedDebit = async () => {
-    try {
-      const res = await axios.get(
-        `${URL}/transaction/getcompletedebit`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data) {
-        setArchiveDebit(res.data);
-        // console.log("Completed debits:", res.data);
-      }
-    } catch (error) {
-      console.error("Error fetching completed credits:", error);
-    }
-  };
-
-  // bills
-  const markBillsAsCompleted = async (id) => {
-    try {
-      const res = await axios.patch(
-        `${URL}/bill/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data.success) {
-        setBills((prev) => prev.filter((item) => item._id !== id));
-        setCompletedBills((prev) => [...prev, res.data.data]);
-      }
-    } catch (error) {
-      console.error("Error marking credit as completed", error);
-    }
-  };
-
-  const getCompletedBills = async () => {
-    try {
-      const res = await axios.get(
-        `${URL}/bill/completedbills`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-
-      if (res.data) {
-        setCompletedBills(res.data);
-        // console.log("Completed Bills:", res.data);
-      }
-    } catch (error) {
-      console.error("Error fetching completed bills:", error);
-    }
-  };
-
   // User search
 
-  const[searchUser,setSearchUser] = useState([])
-  const[participants,setParticipants] = useState([])
+  const [searchUser, setSearchUser] = useState([]);
+  const [participants, setParticipants] = useState([]);
 
   const addParticipant = (reqUser) => {
-    setParticipants((prev)  => {
-      if(!prev.find((u) => u._id === reqUser._id)){
-        return[...prev,reqUser]
+    setParticipants((prev) => {
+      if (!prev.find((u) => u._id === reqUser._id)) {
+        return [...prev, reqUser];
       }
-    })
-  } 
-
+    });
+  };
 
   const value = {
-    token,setToken,user,setUser,logout, // Auth
+    token,
+    setToken,
+    user,
+    setUser,
+    logout, // Auth
     URL,
     deleteItem, // global delete
-    expenses,setExpenses, //  Expenses
-    credit,setCredit,getCompletedCredit,archiveCredit,markCreditAsCompleted,creditCount ,//credit
-    debit,setDebit,archiveDebit,setArchiveDebit,markDedbitAsCompleted,getCompletedDebit,debitCount, //debits
-    goals,setGoals, //goals
-    bills,setBills,completedBills,setCompletedBills,markBillsAsCompleted,getCompletedBills, // bills
-    splits,setSplits,completedSplits,setCompletedSplits,  //splits
-    searchUser,setSearchUser,
-    participants,setParticipants,addParticipant //splits
+    expenses,
+    setExpenses, //  Expenses
+    goals,
+    setGoals, //goals
+    searchUser,
+    setSearchUser,
+    participants,
+    setParticipants,
+    addParticipant, //splits
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
