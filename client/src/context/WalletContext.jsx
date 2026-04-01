@@ -15,7 +15,7 @@ export const WalletProvider = ({ children }) => {
   const getWallets = async () => {
     try {
       setLoading(true);
-      const { data } = await API.get("/wallet");
+      const { data } = await API.get("/wallet/allwallets");
       setWallets(data.wallets);
     } catch (error) {
       console.error(error.response?.data?.message);

@@ -14,7 +14,7 @@ const walletRouter = express.Router();
 
 walletRouter.post("/create", authMiddleware, createWallet);
 
-walletRouter.get("/", authMiddleware, getWallets);
+walletRouter.get("/allwallets", authMiddleware, getWallets);
 
 walletRouter.get("/transactions/:id", authMiddleware, getTransactionsByWallet);
 
