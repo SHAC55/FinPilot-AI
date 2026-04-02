@@ -8,7 +8,7 @@ import API from "../api.js";
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
-  const  URL  =  'https://finpilot-server.onrender.com/api'
+  const URL = "https://finpilot-server.onrender.com/api";
   // const URL = `http://localhost:5000/api`;
 
   const [loading, setLoading] = useState(false);
@@ -16,6 +16,14 @@ const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      fetchExpenses();
+    }
+  }, [token]);
 
   const fetchExpenses = async () => {
     try {
@@ -29,11 +37,7 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      fetchExpenses();
-    }
-  }, []);
+  
 
   const [goals, setGoals] = useState([]);
 
