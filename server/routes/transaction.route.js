@@ -9,7 +9,8 @@ import {
 const transactionRouter = express.Router();
 
 transactionRouter.post("/add-transaction", authMiddleware, addTransaction);
-transactionRouter.get("/get-expenses", authMiddleware, getUserExpenses);
+
 transactionRouter.delete("/delete-expense/:id", authMiddleware, deleteExpense);
+transactionRouter.get("/get-expenses",authMiddleware,getUserExpenses);
 
 export default transactionRouter;
