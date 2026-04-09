@@ -93,39 +93,11 @@ export const loginUser = async (req, res) => {
         message: "Invalid email or password",
       });
     }
+    
 
-    // If not verified, send OTP
-    if (!user.isVerified) {
-      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-      const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
-
-      // Save OTP
-      user.otp = {
-        code: otpCode,
-        expiresAt: otpExpiry,
-      };
-      await user.save();
-
-      // Send OTP to email
-      await sendEmail({
-        to: email,
-        subject: "🔐 Verify Your FinPilot Account",
-        html: buildOtpEmail({
-          username: user.username,
-          otp: otpCode,
-        }),
-      });
-
-      return res.status(200).json({
-        success: true,
-        requiresVerification: true,
-        message:
-          "Your account is not verified. OTP has been sent to your email.",
-      });
-    }
-
-    // If verified, login success
+    // login success
     const token = createToken(user._id);
+
     return res.status(200).json({
       success: true,
       token,
@@ -135,6 +107,7 @@ export const loginUser = async (req, res) => {
         email: user.email,
       },
     });
+
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ success: false, message: "Login failed" });
