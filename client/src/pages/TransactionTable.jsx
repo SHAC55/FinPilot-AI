@@ -206,7 +206,7 @@ const TransactionTable = () => {
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-3">
                             <span className="text-blue-600 text-sm font-semibold">
-                              {expense.title.charAt(0).toUpperCase()}
+                             {expense.title?.charAt(0)?.toUpperCase() || "?"}
                             </span>
                           </div>
                           <div>
@@ -251,7 +251,7 @@ const TransactionTable = () => {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-gray-600 text-sm capitalize">
-                        {expense.method.replace("_", " ")}
+                        {expense.method?.replace("_", " ") || "N/A"}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <button
@@ -341,7 +341,7 @@ const TransactionTable = () => {
                     <p className="text-xs text-gray-500">
                       Method:{" "}
                       <span className="capitalize text-gray-600">
-                        {expense.method.replace("_", " ")}
+                        {expense.method?.replace("_", " ") || "N/A"}
                       </span>
                     </p>
                     {expense.description && (
