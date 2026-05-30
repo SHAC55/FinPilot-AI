@@ -18,7 +18,7 @@ import {
 import API from "../api";
 
 const Login = () => {
-  const { setToken, setUser, URL } = useContext(AppContext);
+  const {  setUser} = useContext(AppContext);
   const navigate = useNavigate();
 
   // const [showOtp, setShowOtp] = useState(false);
@@ -41,12 +41,7 @@ const Login = () => {
       });
 
       if (res.data.success) {
-        setToken(res.data.token);
         setUser(res.data.user);
-
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-
         toast.success("Login Successful");
         navigate("/dashboard");
       }
@@ -58,29 +53,8 @@ const Login = () => {
     }
   };
 
-  // const handleVerifyOtp = async (otpData) => {
-  //   setIsLoading(true);
-  //   try {
-  //     const res = await API.post(`/auth/verify-otp`, {
-  //       email: userEmail,
-  //       otp: otpData.otp,
-  //     });
+ 
 
-  //     if (res.data.success) {
-  //       setToken(res.data.token);
-  //       setUser(res.data.user);
-  //       localStorage.setItem("token", res.data.token);
-  //       localStorage.setItem("user", JSON.stringify(res.data.user));
-  //       toast.success("Account verified and logged in!");
-  //       navigate("/dashboard");
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error(err.response?.data?.message || "OTP verification failed");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const features = [
     { icon: TrendingUp, text: "AI-powered insights" },
@@ -294,7 +268,7 @@ const Login = () => {
             {/* Demo Credentials */}
             {/* <div className="mt-6 p-4 bg-blue-50 rounded-xl">
               <p className="text-xs text-blue-800 text-center">
-                🔐 Demo Credentials: demo@finpilot.com / demo123
+                Demo Credentials: demo@finpilot.com / demo123
               </p>
             </div> */}
           </div>

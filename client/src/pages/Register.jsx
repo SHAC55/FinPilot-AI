@@ -74,7 +74,6 @@ const Register = () => {
 
       if (res.data.success) {
         toast.success("Account verified and logged in!");
-        localStorage.setItem("token", res.data.token);
         navigate("/dashboard");
       }
     } catch (err) {

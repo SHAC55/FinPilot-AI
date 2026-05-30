@@ -1,34 +1,51 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import API from "../api.js";
 
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const URL = "https://finpilot-ai-t81b.onrender.com/api";
-  // const URL = `http://localhost:5000/api`;
+  // const URL = "http://localhost:5000/api";
 
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
+  const [goals, setGoals] = useState([]);
 
+  const [searchUser, setSearchUser] = useState([]);
+  const [participants, setParticipants] = useState([]);
+
+  const navigate = useNavigate();
+
+  // Check if user is logged in
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const loadUser = async () => {
+      try {
+        const res = await API.get("/auth/me");
 
-    if (token) {
-      fetchExpenses();
-    }
-  }, [token]);
+        if (res.data.success) {
+          setUser(res.data.user);
+          fetchExpenses();
+        }
+      } catch (err) {
+        console.log("Not authenticated");
+        setUser(null);
+      }
+    };
+
+    loadUser();
+  }, []);
 
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-      const res = await API.get(`/transaction/get-expenses`);
+
+      const res = await API.get("/transaction/get-expenses");
+
       setExpenses(res.data.data || []);
     } catch (err) {
       console.log("Error fetching expenses", err);
@@ -37,26 +54,22 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  
+  const logout = async () => {
+    try {
+      await API.post("/auth/logout");
+    } catch (err) {
+      console.log(err);
+    }
 
-  const [goals, setGoals] = useState([]);
-
-  const navigate = useNavigate();
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken("");
     setUser(null);
+    setExpenses([]);
+    setGoals([]);
     navigate("/login");
   };
 
   const deleteItem = async (endpoint, id, setState) => {
     try {
-      const res = await axios.delete(`${URL}/${endpoint}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await API.delete(`/${endpoint}/${id}`);
 
       if (res.data.success) {
         setState((prev) => prev.filter((item) => item._id !== id));
@@ -70,36 +83,41 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  // User search
-
-  const [searchUser, setSearchUser] = useState([]);
-  const [participants, setParticipants] = useState([]);
-
   const addParticipant = (reqUser) => {
     setParticipants((prev) => {
       if (!prev.find((u) => u._id === reqUser._id)) {
         return [...prev, reqUser];
       }
+      return prev;
     });
   };
 
   const value = {
-    token,
-    setToken,
     user,
     setUser,
-    logout, // Auth
+    loading,
+    setLoading,
+
+    logout,
+
     URL,
-    deleteItem, // global delete
+
+    deleteItem,
+
     expenses,
-    setExpenses, //  Expenses
+    setExpenses,
+
     goals,
-    setGoals, //goals
+    setGoals,
+
     searchUser,
     setSearchUser,
+
     participants,
     setParticipants,
-    addParticipant, //splits
+    addParticipant,
+
+    fetchExpenses,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

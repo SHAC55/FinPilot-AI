@@ -27,15 +27,12 @@ import SplitBills from "./pages/SplitBills";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResestPassword from "./pages/ResestPassword";
 
-
 const App = () => {
   const location = useLocation();
-
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-    if (token) {
-      localStorage.setItem("token", token);
+
+    if (params.get("token")) {
       window.history.replaceState({}, document.title, "/");
     }
   }, []);
@@ -55,12 +52,12 @@ const App = () => {
     "/",
     "/split-bills/create",
     "/forgot-password",
-    "/reset-password"
+    "/reset-password",
   ];
 
   const shouldHideNavbar =
-  hideNavbarPaths.includes(location.pathname) ||
-  location.pathname.startsWith("/reset-password/");
+    hideNavbarPaths.includes(location.pathname) ||
+    location.pathname.startsWith("/reset-password/");
 
   return (
     <div className="min-w-[320px]">
@@ -194,8 +191,6 @@ const App = () => {
           }
         />
 
-       
-        
         <Route
           path="/split-bills/create"
           element={
