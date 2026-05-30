@@ -3,13 +3,15 @@ import User from "../models/user.model.js";
 
 const authMiddleware = async (req, res, next) => {
   try {
-    // Allow preflight requests
     if (req.method === "OPTIONS") {
       return next();
     }
 
-    // Get token from cookie
     const token = req.cookies.token;
+
+    console.log("=== AUTH DEBUG ===");
+    console.log("Cookies:", req.cookies);
+    console.log("Token:", token);
 
     if (!token) {
       return res.status(401).json({
@@ -18,10 +20,10 @@ const authMiddleware = async (req, res, next) => {
       });
     }
 
-    // Verify JWT
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Find user
+    console.log("Decoded:", decoded);
+
     const user = await User.findById(decoded.id).select("-password");
 
     if (!user) {
