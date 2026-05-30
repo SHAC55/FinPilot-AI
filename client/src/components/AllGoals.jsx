@@ -15,6 +15,7 @@ import {
   IndianRupee,
   Wallet,
 } from "lucide-react";
+import API from "../api";
 
 const daysLeft = (deadline) => {
   const diff = new Date(deadline) - new Date();

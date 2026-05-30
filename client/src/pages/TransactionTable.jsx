@@ -10,6 +10,7 @@ import {
 import { AppContext } from "../context/appContext";
 import TransactionFilterHeader from "../components/TransactionFilterHeader";
 import { useNavigate } from "react-router-dom";
+import API from "../api";
 
 const TransactionTable = () => {
   const { expenses, setExpenses, deleteItem, URL } = useContext(AppContext);
