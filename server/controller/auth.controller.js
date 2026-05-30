@@ -98,15 +98,21 @@ export const loginUser = async (req, res) => {
     // login success
     const token = createToken(user._id);
 
-    return res.status(200).json({
-      success: true,
-      token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
-    });
+    // return res.status(200).json({
+    //   success: true,
+    //   token,
+    //   user: {
+    //     id: user._id,
+    //     username: user.username,
+    //     email: user.email,
+    //   },
+    // });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    })
 
   } catch (error) {
     console.error("Login Error:", error);
@@ -193,22 +199,35 @@ export const verifyOtp = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user || !user.otp || user.otp.code !== otp) {
-      return res.status(400).json({ success: false, message: "Invalid OTP" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid OTP",
+      });
     }
 
     if (user.otp.expiresAt < new Date()) {
-      return res.status(400).json({ success: false, message: "OTP expired" });
+      return res.status(400).json({
+        success: false,
+        message: "OTP expired",
+      });
     }
 
-    // OTP valid – clear it
+    user.isVerified = true;
     user.otp = undefined;
     await user.save();
 
     const token = createToken(user._id);
 
-    res.json({
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    return res.json({
       success: true,
-      token,
       user: {
         id: user._id,
         username: user.username,
@@ -217,9 +236,11 @@ export const verifyOtp = async (req, res) => {
     });
   } catch (err) {
     console.error("OTP Verify Error:", err);
-    res
-      .status(500)
-      .json({ success: false, message: "OTP verification failed" });
+
+    return res.status(500).json({
+      success: false,
+      message: "OTP verification failed",
+    });
   }
 };
 

@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import connectMongoDB from "./config/mongoDB.js";
 import authRouter from "./routes/auth.route.js";
@@ -20,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 connectMongoDB();
 
 // middleware
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://finpilotai.vercel.app"],
