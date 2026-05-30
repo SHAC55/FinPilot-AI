@@ -23,12 +23,48 @@ const daysLeft = (deadline) => {
 
 // Subtle accent colors — blue is primary, others complement
 const ACCENTS = [
-  { from: "from-blue-500",    to: "to-blue-600",    light: "bg-blue-50",    text: "text-blue-600",    bar: "bg-blue-500"    },
-  { from: "from-slate-600",   to: "to-slate-700",   light: "bg-slate-100",  text: "text-slate-600",   bar: "bg-slate-500"   },
-  { from: "from-cyan-500",    to: "to-cyan-600",    light: "bg-cyan-50",    text: "text-cyan-600",    bar: "bg-cyan-500"    },
-  { from: "from-indigo-500",  to: "to-indigo-600",  light: "bg-indigo-50",  text: "text-indigo-600",  bar: "bg-indigo-500"  },
-  { from: "from-teal-500",    to: "to-teal-600",    light: "bg-teal-50",    text: "text-teal-600",    bar: "bg-teal-500"    },
-  { from: "from-sky-500",     to: "to-sky-600",     light: "bg-sky-50",     text: "text-sky-600",     bar: "bg-sky-500"     },
+  {
+    from: "from-blue-500",
+    to: "to-blue-600",
+    light: "bg-blue-50",
+    text: "text-blue-600",
+    bar: "bg-blue-500",
+  },
+  {
+    from: "from-slate-600",
+    to: "to-slate-700",
+    light: "bg-slate-100",
+    text: "text-slate-600",
+    bar: "bg-slate-500",
+  },
+  {
+    from: "from-cyan-500",
+    to: "to-cyan-600",
+    light: "bg-cyan-50",
+    text: "text-cyan-600",
+    bar: "bg-cyan-500",
+  },
+  {
+    from: "from-indigo-500",
+    to: "to-indigo-600",
+    light: "bg-indigo-50",
+    text: "text-indigo-600",
+    bar: "bg-indigo-500",
+  },
+  {
+    from: "from-teal-500",
+    to: "to-teal-600",
+    light: "bg-teal-50",
+    text: "text-teal-600",
+    bar: "bg-teal-500",
+  },
+  {
+    from: "from-sky-500",
+    to: "to-sky-600",
+    light: "bg-sky-50",
+    text: "text-sky-600",
+    bar: "bg-sky-500",
+  },
 ];
 
 // ── Add Funds Modal ──────────────────────────────────────────────────────────
@@ -111,58 +147,56 @@ const AllGoals = () => {
   const { goals, setGoals, deleteItem, URL } = useContext(AppContext);
   const navigate = useNavigate();
   const [fundTarget, setFundTarget] = useState(null);
-
   useEffect(() => {
     const fetchGoals = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${URL}/goal/getallgoals`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.data.success) setGoals(res.data.data);
+        const res = await API.get("/goal/getallgoals");
+
+        if (res.data.success) {
+          setGoals(res.data.data);
+        }
       } catch (err) {
         console.error("Error fetching goals:", err);
       }
     };
+
     fetchGoals();
   }, [setGoals]);
 
   const handleAddFunds = async (id, amount) => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.patch(
-        `${URL}/goal/addfund/${id}`,
-        { amount },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await API.patch(`/goal/addfund/${id}`, { amount });
+
       if (res.data.success) {
         setGoals((prev) =>
           prev.map((g) =>
-            g._id === id ? { ...g, savedAmount: res.data.data.savedAmount } : g
-          )
+            g._id === id ? { ...g, savedAmount: res.data.data.savedAmount } : g,
+          ),
         );
+
         toast.success("Funds added successfully!");
       } else {
         toast.error(res.data.message || "Failed to add funds");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       toast.error("Server error while adding funds");
     }
   };
 
   const handleMarkCompleted = async (id) => {
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(
-        `${URL}/goal/complete/${id}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setGoals((prev) =>
-        prev.map((g) => g._id === id ? { ...g, completed: true } : g)
-      );
-      toast.success("Goal marked as completed!");
-    } catch {
+      const res = await API.put(`/goal/complete/${id}`, {});
+
+      if (res.data.success) {
+        setGoals((prev) =>
+          prev.map((g) => (g._id === id ? { ...g, completed: true } : g)),
+        );
+
+        toast.success("Goal marked as completed!");
+      }
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to mark goal as completed");
     }
   };
@@ -201,7 +235,9 @@ const AllGoals = () => {
           <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-200">
             <Target size={26} className="text-white" />
           </div>
-          <h3 className="text-base font-bold text-gray-800 mb-1">No goals yet</h3>
+          <h3 className="text-base font-bold text-gray-800 mb-1">
+            No goals yet
+          </h3>
           <p className="text-sm text-gray-400 max-w-xs">
             Set a savings target and start tracking your progress toward it.
           </p>
@@ -213,8 +249,10 @@ const AllGoals = () => {
         {goals.map((goal, i) => {
           const accent = ACCENTS[i % ACCENTS.length];
           const progress = Math.min(
-            parseFloat(((goal.savedAmount / goal.targetAmount) * 100).toFixed(1)),
-            100
+            parseFloat(
+              ((goal.savedAmount / goal.targetAmount) * 100).toFixed(1),
+            ),
+            100,
           );
           const remaining = Math.max(0, goal.targetAmount - goal.savedAmount);
           const days = daysLeft(goal.deadline);
@@ -226,13 +264,16 @@ const AllGoals = () => {
               className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden group"
             >
               {/* Thin top accent */}
-              <div className={`h-[3px] bg-gradient-to-r ${accent.from} ${accent.to}`} />
+              <div
+                className={`h-[3px] bg-gradient-to-r ${accent.from} ${accent.to}`}
+              />
 
               <div className="p-5 flex flex-col gap-4 flex-1">
-
                 {/* ── Card Top ──────────────────────────────────────────── */}
                 <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 rounded-xl ${accent.light} ${accent.text} flex items-center justify-center font-bold text-base flex-shrink-0`}>
+                  <div
+                    className={`w-10 h-10 rounded-xl ${accent.light} ${accent.text} flex items-center justify-center font-bold text-base flex-shrink-0`}
+                  >
                     {goal.goalName.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -245,9 +286,13 @@ const AllGoals = () => {
                           <CheckCircle2 size={10} /> Completed
                         </span>
                       ) : (
-                        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
-                          isUrgent ? "text-red-600 bg-red-50" : "text-gray-500 bg-gray-100"
-                        }`}>
+                        <span
+                          className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                            isUrgent
+                              ? "text-red-600 bg-red-50"
+                              : "text-gray-500 bg-gray-100"
+                          }`}
+                        >
                           <CalendarDays size={10} />
                           {days === 0 ? "Due today!" : `${days}d left`}
                         </span>
@@ -259,19 +304,25 @@ const AllGoals = () => {
                 {/* ── Amount Stats ───────────────────────────────────────── */}
                 <div className="grid grid-cols-3 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
                   <div className="flex flex-col items-center py-2.5 px-1">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">Saved</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                      Saved
+                    </span>
                     <span className="text-xs font-bold text-emerald-600">
                       ₹{goal.savedAmount.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="flex flex-col items-center py-2.5 px-1 border-x border-gray-100">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">Target</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                      Target
+                    </span>
                     <span className="text-xs font-bold text-gray-700">
                       ₹{goal.targetAmount.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="flex flex-col items-center py-2.5 px-1">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">Left</span>
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400 mb-1">
+                      Left
+                    </span>
                     <span className="text-xs font-bold text-orange-500">
                       ₹{remaining.toLocaleString("en-IN")}
                     </span>
@@ -285,7 +336,9 @@ const AllGoals = () => {
                       <TrendingUp size={11} />
                       Progress
                     </span>
-                    <span className={`text-[11px] font-bold ${accent.text}`}>{progress}%</span>
+                    <span className={`text-[11px] font-bold ${accent.text}`}>
+                      {progress}%
+                    </span>
                   </div>
                   <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                     <div
@@ -300,7 +353,9 @@ const AllGoals = () => {
                   <CalendarDays size={11} />
                   <span>
                     {new Date(goal.deadline).toLocaleDateString("en-IN", {
-                      day: "numeric", month: "short", year: "numeric",
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
                     })}
                   </span>
                 </div>
@@ -337,14 +392,15 @@ const AllGoals = () => {
 
                   {/* Delete — pushed right */}
                   <button
-                    onClick={() => deleteItem("goal/delete-goal", goal._id, setGoals)}
+                    onClick={() =>
+                      deleteItem("goal/delete-goal", goal._id, setGoals)
+                    }
                     className="ml-auto w-7 h-7 rounded-lg border border-gray-200 hover:border-red-200 hover:bg-red-50 flex items-center justify-center text-gray-400 hover:text-red-500 transition"
                     title="Delete goal"
                   >
                     <Trash2 size={13} />
                   </button>
                 </div>
-
               </div>
             </div>
           );

@@ -35,14 +35,11 @@ const TransactionTable = () => {
   useEffect(() => {
     const fetchAllExpenses = async () => {
       try {
-        const res = await axios.get(`${URL}/transaction/get-expenses`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await API.get("/transaction/get-expenses");
 
         setExpenses(res.data.data || []);
       } catch (err) {
+        console.error(err);
         setError("Unable to fetch expenses.");
       } finally {
         setLoading(false);
@@ -206,7 +203,7 @@ const TransactionTable = () => {
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-3">
                             <span className="text-blue-600 text-sm font-semibold">
-                             {expense.title?.charAt(0)?.toUpperCase() || "?"}
+                              {expense.title?.charAt(0)?.toUpperCase() || "?"}
                             </span>
                           </div>
                           <div>
