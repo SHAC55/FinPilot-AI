@@ -6,6 +6,8 @@ import {
   resetPassword,
   searchUser,
   verifyOtp,
+  getMe,
+  logoutUser,
 } from "../controller/auth.controller.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
@@ -18,5 +20,7 @@ authRouter.get("/searchuser", authMiddleware, searchUser);
 authRouter.post("/verify-otp", verifyOtp);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:token", resetPassword);
+authRouter.get("/me", authMiddleware, getMe);
+authRouter.post("/logout", authMiddleware, logoutUser);
 
 export default authRouter;

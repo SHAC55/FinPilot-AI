@@ -93,7 +93,6 @@ export const loginUser = async (req, res) => {
         message: "Invalid email or password",
       });
     }
-    
 
     // login success
     const token = createToken(user._id);
@@ -109,15 +108,30 @@ export const loginUser = async (req, res) => {
     // });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    })
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
   } catch (error) {
     console.error("Login Error:", error);
     return res.status(500).json({ success: false, message: "Login failed" });
   }
+};
+
+export const getMe = (req, res) => {
+  res.json({
+    success: true,
+    user: req.user,
+  });
 };
 
 export const searchUser = async (req, res) => {
@@ -304,5 +318,25 @@ export const resetPassword = async (req, res) => {
     res.json({ message: "Password reset successful" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+export const logoutUser = (req, res) => {
+  try{
+    res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
+
+  res.json({
+    success: true,
+    message: "Logged out",
+  });
+  }catch(err) {
+    res.status(500).json({
+      success: false,
+      message: "Logout failed",
+    });
   }
 };
