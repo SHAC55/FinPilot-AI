@@ -2,9 +2,9 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
-import crypto from "crypto";
-import { sendEmail } from "../utils/emailService.js";
-import { buildOtpEmail } from "../utils/emailTemplates/buildOtpEmail.js";
+// import crypto from "crypto";
+// import { sendEmail } from "../utils/emailService.js";
+// import { buildOtpEmail } from "../utils/emailTemplates/buildOtpEmail.js";
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -15,17 +15,17 @@ export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    let existingUser = await User.findOne({ email });
+    // Check existing user
+    const existingUser = await User.findOne({ email });
 
-    // User exists and verified
-    if (existingUser && existingUser.isVerified) {
+    if (existingUser) {
       return res.status(409).json({
         success: false,
         message: "User already exists",
       });
     }
 
-    // Validation
+    // Validate email
     if (!validator.isEmail(email)) {
       return res.status(400).json({
         success: false,
@@ -33,6 +33,15 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    // Validate username
+    if (!username || username.trim().length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: "Username must be at least 3 characters",
+      });
+    }
+
+    // Validate password
     if (!password || password.length < 8) {
       return res.status(400).json({
         success: false,
@@ -40,63 +49,39 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // Generate OTP
-    const otpCode = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const otpExpiry = new Date(
-      Date.now() + 5 * 60 * 1000
-    );
+    // Create user
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      isVerified: true,
+    });
 
-    let user;
+    // Generate token
+    const token = createToken(user._id);
 
-    if (existingUser && !existingUser.isVerified) {
-      // Resend OTP
-      existingUser.otp = {
-        code: otpCode,
-        expiresAt: otpExpiry,
-      };
-
-      await existingUser.save();
-      user = existingUser;
-    } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      user = await User.create({
-        username,
-        email,
-        password: hashedPassword,
-        isVerified: false,
-        otp: {
-          code: otpCode,
-          expiresAt: otpExpiry,
-        },
-      });
-    }
-
-    try {
-      await sendEmail({
-        to: email,
-        subject: "FinPilot - Verify your account",
-        text: `Your OTP code is: ${otpCode}`,
-      });
-    } catch (emailError) {
-      console.error("Email Error:", emailError);
-
-      return res.status(500).json({
-        success: false,
-        message:
-          "Failed to send OTP email. Please try again.",
-      });
-    }
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(201).json({
       success: true,
-      message: "OTP sent successfully",
+      message: "Registration successful",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
     });
   } catch (error) {
-    console.error("Registration error:", error);
+    console.error("Registration Error:", error);
 
     return res.status(500).json({
       success: false,
@@ -104,7 +89,6 @@ export const registerUser = async (req, res) => {
     });
   }
 };
-
 // LOGIN
 export const loginUser = async (req, res) => {
   try {
@@ -239,57 +223,57 @@ export const searchUser = async (req, res) => {
 //   }
 // };
 
-export const verifyOtp = async (req, res) => {
-  try {
-    const { email, otp } = req.body;
+// export const verifyOtp = async (req, res) => {
+//   try {
+//     const { email, otp } = req.body;
 
-    const user = await User.findOne({ email });
+//     const user = await User.findOne({ email });
 
-    if (!user || !user.otp || user.otp.code !== otp) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
-      });
-    }
+//     if (!user || !user.otp || user.otp.code !== otp) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid OTP",
+//       });
+//     }
 
-    if (user.otp.expiresAt < new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: "OTP expired",
-      });
-    }
+//     if (user.otp.expiresAt < new Date()) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "OTP expired",
+//       });
+//     }
 
-    user.isVerified = true;
-    user.otp = undefined;
-    await user.save();
+//     user.isVerified = true;
+//     user.otp = undefined;
+//     await user.save();
 
-    const token = createToken(user._id);
+//     const token = createToken(user._id);
 
-    // Set cookie
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+//     // Set cookie
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "strict",
+//       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+//     });
 
-    return res.json({
-      success: true,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
-    });
-  } catch (err) {
-    console.error("OTP Verify Error:", err);
+//     return res.json({
+//       success: true,
+//       user: {
+//         id: user._id,
+//         username: user.username,
+//         email: user.email,
+//       },
+//     });
+//   } catch (err) {
+//     console.error("OTP Verify Error:", err);
 
-    return res.status(500).json({
-      success: false,
-      message: "OTP verification failed",
-    });
-  }
-};
+//     return res.status(500).json({
+//       success: false,
+//       message: "OTP verification failed",
+//     });
+//   }
+// };
 
 export const forgotPassword = async (req, res) => {
   try {
