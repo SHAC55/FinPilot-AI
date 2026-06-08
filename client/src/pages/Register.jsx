@@ -64,25 +64,25 @@ const Register = () => {
   };
 
   // Step 2: Verify OTP
-  const handleVerifyOtp = async (data) => {
-    setIsLoading(true);
-    try {
-      const res = await API.post(`/auth/verify-otp`, {
-        email: userEmail,
-        otp: data.otp,
-      });
+  // const handleVerifyOtp = async (data) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const res = await API.post(`/auth/verify-otp`, {
+  //       email: userEmail,
+  //       otp: data.otp,
+  //     });
 
-      if (res.data.success) {
-        toast.success("Account verified and logged in!");
-        navigate("/dashboard");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || "OTP verification failed");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //     if (res.data.success) {
+  //       toast.success("Account verified and logged in!");
+  //       navigate("/dashboard");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error(err.response?.data?.message || "OTP verification failed");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const features = [
     { icon: TrendingUp, text: "AI-powered insights" },

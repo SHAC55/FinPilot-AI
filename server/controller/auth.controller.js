@@ -15,17 +15,22 @@ export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user exists
     let existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res
-        .status(409)
-        .json({ success: false, message: "User already exists" });
+
+    // User exists and verified
+    if (existingUser && existingUser.isVerified) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
     }
 
-    // Validate inputs
+    // Validation
     if (!validator.isEmail(email)) {
-      return res.status(400).json({ success: false, message: "Invalid email" });
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email",
+      });
     }
 
     if (!password || password.length < 8) {
@@ -35,40 +40,68 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     // Generate OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+    const otpCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
-    // Create user with OTP (unverified)
-    const user = await User.create({
-      username,
-      email,
-      password: hashedPassword,
-      isVerified: false,
-      otp: {
+    const otpExpiry = new Date(
+      Date.now() + 5 * 60 * 1000
+    );
+
+    let user;
+
+    if (existingUser && !existingUser.isVerified) {
+      // Resend OTP
+      existingUser.otp = {
         code: otpCode,
         expiresAt: otpExpiry,
-      },
-    });
+      };
 
-    // Send OTP via email
-    await sendEmail({
-      to: email,
-      subject: "FinPilot - AI Verify your account",
-      text: `Your OTP code is: ${otpCode}`,
-    });
+      await existingUser.save();
+      user = existingUser;
+    } else {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    res.status(201).json({
+      user = await User.create({
+        username,
+        email,
+        password: hashedPassword,
+        isVerified: false,
+        otp: {
+          code: otpCode,
+          expiresAt: otpExpiry,
+        },
+      });
+    }
+
+    try {
+      await sendEmail({
+        to: email,
+        subject: "FinPilot - Verify your account",
+        text: `Your OTP code is: ${otpCode}`,
+      });
+    } catch (emailError) {
+      console.error("Email Error:", emailError);
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Failed to send OTP email. Please try again.",
+      });
+    }
+
+    return res.status(201).json({
       success: true,
-      message:
-        "OTP sent to your email. Please verify to complete registration.",
+      message: "OTP sent successfully",
     });
   } catch (error) {
     console.error("Registration error:", error);
-    res.status(500).json({ success: false, message: "Registration failed" });
+
+    return res.status(500).json({
+      success: false,
+      message: "Registration failed",
+    });
   }
 };
 
