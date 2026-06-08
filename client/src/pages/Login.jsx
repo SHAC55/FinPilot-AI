@@ -32,7 +32,7 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+ const onSubmit = async (data) => {
     setIsLoading(true);
     try {
       const res = await API.post(`/auth/login`, {
@@ -41,12 +41,8 @@ const Login = () => {
       });
 
       if (res.data.success) {
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-
         setUser(res.data.user);
-
         toast.success("Login Successful");
-
         navigate("/dashboard");
       }
     } catch (err) {

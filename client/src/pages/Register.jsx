@@ -15,11 +15,14 @@ import {
   CheckCircle
 } from "lucide-react";
 import API from "../api.js";
+import { AppContext } from "../context/appContext.jsx";
 
 const Register = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+   const { setUser } = useContext(AppContext);
 
   const {
     register,
@@ -30,7 +33,7 @@ const Register = () => {
 
   const password = watch("password");
 
-  const handleRegister = async (data) => {
+   const handleRegister = async (data) => {
     setIsLoading(true);
     try {
       const res = await API.post(`/auth/register`, {
@@ -40,6 +43,7 @@ const Register = () => {
       });
 
       if (res.data.success) {
+        setUser(res.data.user);
         toast.success("Account created successfully!");
         navigate("/dashboard");
       }
