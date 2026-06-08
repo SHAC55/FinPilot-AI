@@ -18,7 +18,7 @@ import {
 import API from "../api";
 
 const Login = () => {
-  const {  setUser} = useContext(AppContext);
+  const { setUser } = useContext(AppContext);
   const navigate = useNavigate();
 
   // const [showOtp, setShowOtp] = useState(false);
@@ -41,8 +41,12 @@ const Login = () => {
       });
 
       if (res.data.success) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+
         setUser(res.data.user);
+
         toast.success("Login Successful");
+
         navigate("/dashboard");
       }
     } catch (err) {
@@ -52,9 +56,6 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
- 
-
 
   const features = [
     { icon: TrendingUp, text: "AI-powered insights" },
