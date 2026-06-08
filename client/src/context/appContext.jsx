@@ -8,20 +8,17 @@ const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
   const URL = "https://finpilot-ai-t81b.onrender.com/api";
-  // const URL = "http://localhost:5000/api";
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); 
   const [user, setUser] = useState(null);
 
   const [expenses, setExpenses] = useState([]);
   const [goals, setGoals] = useState([]);
-
   const [searchUser, setSearchUser] = useState([]);
   const [participants, setParticipants] = useState([]);
 
   const navigate = useNavigate();
 
-  // Check if user is logged in
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -31,6 +28,8 @@ const AppProvider = ({ children }) => {
         }
       } catch {
         setUser(null);
+      } finally {
+        setLoading(false); // ← always unblock after attempt
       }
     };
 
@@ -40,9 +39,7 @@ const AppProvider = ({ children }) => {
   const fetchExpenses = async () => {
     try {
       setLoading(true);
-
       const res = await API.get("/transaction/get-expenses");
-
       setExpenses(res.data.data || []);
     } catch (err) {
       console.log("Error fetching expenses", err);
@@ -57,7 +54,6 @@ const AppProvider = ({ children }) => {
     } catch (err) {
       console.log(err);
     }
-
     setUser(null);
     setExpenses([]);
     setGoals([]);
@@ -67,7 +63,6 @@ const AppProvider = ({ children }) => {
   const deleteItem = async (endpoint, id, setState) => {
     try {
       const res = await API.delete(`/${endpoint}/${id}`);
-
       if (res.data.success) {
         setState((prev) => prev.filter((item) => item._id !== id));
         toast.success("Removed Successfully");
@@ -90,30 +85,16 @@ const AppProvider = ({ children }) => {
   };
 
   const value = {
-    user,
-    setUser,
-    loading,
-    setLoading,
-
+    user, setUser,
+    loading, setLoading,
     logout,
-
     URL,
-
     deleteItem,
-
-    expenses,
-    setExpenses,
-
-    goals,
-    setGoals,
-
-    searchUser,
-    setSearchUser,
-
-    participants,
-    setParticipants,
+    expenses, setExpenses,
+    goals, setGoals,
+    searchUser, setSearchUser,
+    participants, setParticipants,
     addParticipant,
-
     fetchExpenses,
   };
 

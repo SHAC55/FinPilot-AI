@@ -1,11 +1,9 @@
 import React from "react";
 import { useContext } from "react";
 import { AppContext } from "../context/appContext";
-import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
-  const { logout } = useContext(AppContext);
-  const user = JSON.parse(localStorage.getItem("user"));
+  const { user, logout } = useContext(AppContext);
 
   if (!user) {
     return (
@@ -23,7 +21,6 @@ const Profile = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-gray-100">
-        {/* Profile Image */}
         <div className="flex flex-col items-center">
           <div className="w-24 h-24 rounded-full bg-blue-600 flex items-center justify-center text-white text-3xl font-bold shadow-lg">
             {user.username.charAt(0).toUpperCase()}
@@ -34,23 +31,19 @@ const Profile = () => {
           <p className="text-gray-500">{user.email}</p>
         </div>
 
-        {/* Divider */}
         <div className="border-t border-gray-200 my-6"></div>
 
-        {/* User Info */}
         <div className="space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-gray-500 font-medium">Full Name</span>
+            <span className="text-gray-500 font-medium">Username</span>
             <span className="text-gray-800 font-semibold">{user.username}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-500 font-medium">Email</span>
             <span className="text-gray-800 font-semibold">{user.email}</span>
           </div>
-          {/* Add more fields here if needed */}
         </div>
 
-        {/* Action Button */}
         <div className="mt-8">
           <button
             onClick={logout}
