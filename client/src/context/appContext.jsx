@@ -23,21 +23,18 @@ const AppProvider = ({ children }) => {
 
   // Check if user is logged in
   useEffect(() => {
-    const loadUser = async () => {
+    const fetchUser = async () => {
       try {
         const res = await API.get("/auth/me");
-
         if (res.data.success) {
           setUser(res.data.user);
-          fetchExpenses();
         }
-      } catch (err) {
-        console.log("Not authenticated");
+      } catch {
         setUser(null);
       }
     };
 
-    loadUser();
+    fetchUser();
   }, []);
 
   const fetchExpenses = async () => {
