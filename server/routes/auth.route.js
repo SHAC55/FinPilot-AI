@@ -17,7 +17,7 @@ authRouter.post("/login", loginUser);
 authRouter.post("/register", registerUser);
 authRouter.get("/searchuser", authMiddleware, searchUser);
 // authRouter.post("/request-otp", requestOtp);
-authRouter.post("/verify-otp", verifyOtp);
+// authRouter.post("/verify-otp", verifyOtp);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password/:token", resetPassword);
 authRouter.get("/me", authMiddleware, getMe);
