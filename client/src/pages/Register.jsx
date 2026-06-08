@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import API from "../api.js";
 import { AppContext } from "../context/appContext.jsx";
+import { useContext } from "react";
 
 const Register = () => {
   const navigate = useNavigate();
