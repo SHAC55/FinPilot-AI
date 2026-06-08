@@ -15,56 +15,48 @@ export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user exists
     let existingUser = await User.findOne({ email });
-    if (existingUser) {
+    if (existingUser)
       return res
         .status(409)
         .json({ success: false, message: "User already exists" });
-    }
 
-    // Validate inputs
-    if (!validator.isEmail(email)) {
+    if (!validator.isEmail(email))
       return res.status(400).json({ success: false, message: "Invalid email" });
-    }
 
-    if (!password || password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 8 characters",
-      });
-    }
+    if (!password || password.length < 6)
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Password must be at least 6 characters",
+        });
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Generate OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
-    // Create user with OTP (unverified)
     const user = await User.create({
       username,
       email,
       password: hashedPassword,
-      isVerified: false,
-      otp: {
-        code: otpCode,
-        expiresAt: otpExpiry,
-      },
+      isVerified: true, // no OTP, mark verified immediately
     });
 
-    // Send OTP via email
-    await sendEmail({
-      to: email,
-      subject: "FinPilot - AI Verify your account",
-      text: `Your OTP code is: ${otpCode}`,
+    const token = createToken(user._id);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      message:
-        "OTP sent to your email. Please verify to complete registration.",
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -322,18 +314,18 @@ export const resetPassword = async (req, res) => {
 };
 
 export const logoutUser = (req, res) => {
-  try{
+  try {
     res.clearCookie("token", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
-  res.json({
-    success: true,
-    message: "Logged out",
-  });
-  }catch(err) {
+    res.json({
+      success: true,
+      message: "Logged out",
+    });
+  } catch (err) {
     res.status(500).json({
       success: false,
       message: "Logout failed",
