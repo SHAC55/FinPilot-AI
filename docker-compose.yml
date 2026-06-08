@@ -1,0 +1,16 @@
+services:
+  backend:
+    build: ./server
+    container_name: finpilot-backend
+    env_file:
+      - ./server/.env
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: ./client
+    container_name: finpilot-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
