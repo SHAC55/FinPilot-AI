@@ -1,13 +1,20 @@
-// src/services/api.js
-
 import axios from "axios";
 
-// 🔧 Base Config
 const API = axios.create({
-  // baseURL: "http://localhost:5000/api",
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // Send cookies with requests
+  baseURL: import.meta.env.VITE_API_URL ,
+  withCredentials: true,
 });
 
+// Response interceptor — handle 401 globally
+API.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear any stale state — the AppContext useEffect will handle redirect
+      window.dispatchEvent(new CustomEvent("auth:unauthorized"));
+    }
+    return Promise.reject(error);
+  }
+);
 
 export default API;
