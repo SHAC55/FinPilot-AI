@@ -56,15 +56,23 @@ const AppProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await API.post("/auth/logout");
-    } catch (err) {
-      console.log(err);
-    }
+      await API.post(
+        "/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
 
-    setUser(null);
-    setExpenses([]);
-    setGoals([]);
-    navigate("/login");
+      localStorage.removeItem("user");
+
+      navigate("/login");
+
+      toast.success("Logged out successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Logout failed");
+    }
   };
 
   const deleteItem = async (endpoint, id, setState) => {

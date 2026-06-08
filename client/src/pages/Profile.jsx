@@ -1,11 +1,10 @@
 import React from "react";
 import { useContext } from "react";
 import { AppContext } from "../context/appContext";
-
+import { AuthContext } from "../context/AuthContext";
 
 const Profile = () => {
-
-  const { logout  }  = useContext(AppContext)
+  const { logout } = useContext(AppContext);
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
@@ -42,9 +41,7 @@ const Profile = () => {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-500 font-medium">Full Name</span>
-            <span className="text-gray-800 font-semibold">
-              {user.username}
-            </span>
+            <span className="text-gray-800 font-semibold">{user.username}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-gray-500 font-medium">Email</span>
@@ -55,15 +52,14 @@ const Profile = () => {
 
         {/* Action Button */}
         <div className="mt-8">
-          <button 
+          <button
             onClick={logout}
-          className="w-full bg-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all">
+            className="w-full bg-red-600 text-white py-2 px-4 rounded-lg shadow-md hover:opacity-90 transition-all"
+          >
             Logout
           </button>
         </div>
       </div>
-
-      
     </div>
   );
 };
