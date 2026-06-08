@@ -5,7 +5,6 @@ import {
   registerUser,
   resetPassword,
   searchUser,
-  verifyOtp,
   getMe,
   logoutUser,
 } from "../controller/auth.controller.js";
